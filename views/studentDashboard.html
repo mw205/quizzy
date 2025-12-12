@@ -1,26 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Quizzy - Dashboard</title>
-    <link rel="stylesheet" href="../styles/main.css">
-    <link rel="stylesheet" href="../styles/studentDashboardStyle.css">
-</head>
-<body>
+    <link rel="stylesheet" href="../styles/main.css" />
+    <link rel="stylesheet" href="../styles/studentDashboardStyle.css" />
+  </head>
+  <body>
     <nav class="flex w-full">
-        <h1 class="logo">Quizzy</h1>
-        <div class="right">
-            <button class="btn btn-outline btn-icon" id="mode">
-                🌙
-            </button>
-            <button class="btn btn-outline" id="logout">
-                Logout
-            </button>
-        </div>
+      <h1 class="logo">Quizzy</h1>
+      <div class="right">
+        <button class="btn btn-primary" id="mode">🌙</button>
+        <button class="btn btn-primary" id="logout">Logout</button>
+      </div>
     </nav>
-    <main class="dashboard-container flex flex-column align-center">
-        
+    <main class="container dashboard-container flex flex-col">
+      <!-- Welcome Message Profile Picture -->
+      <section class="card p-4 flex profile-section w-full">
+        <div class="welcomeMessage">
+          <h2>
+            Welcome back, <span class="username">emma_lion!</span> 🎉 <br />
+            Ready to become an animal expert?
+          </h2>
+        </div>
+        <div class="profile-picture-container flex flex-col items-center">
+          <div class="mt-4 mb-4">
+            <img
+              src="../assets/profile-placeholder.png"
+              alt="Profile Picture"
+              id="profile-picture"
+            />
+          </div>
+          <h2 class="mb-2">Student Name</h2>
+          <p class="mb-4 grade">Grade: 10th Grade</p>
+        </div>
+      </section>
+      <section class="card p-4 progress-section w-full">
+        <h2>Your <br>Progress</h2>
+        <div class="p-4 flex progress-bar">
+          <p class="card mb-2 flex flex-col items-center"> <span class="icon">🏆</span>Quizzes Taken: <strong>5</strong></p>
+          <p class="card mb-2 flex flex-col items-center"><span class="icon">⭐</span>Average Score: <strong>80%</strong></p>
+        </div>
+      </section>
+      <section>
+        <div class="card p-4">
+          <h3 class="mb-4">Available Quizzes</h3>
+          <ul class="quiz-list">
+            <li class="quiz-item mb-3">
+              <span>Quiz 1: Basic Math</span>
+              <button class="btn btn-primary btn-sm">Start Quiz</button>
+            </li>
+            <li class="quiz-item mb-3">
+              <span>Quiz 2: General Knowledge</span>
+              <button class="btn btn-primary btn-sm">Start Quiz</button>
+            </li>
+            <li class="quiz-item mb-3">
+              <span>Quiz 3: Science Basics</span>
+              <button class="btn btn-primary btn-sm">Start Quiz</button>
+            </li>
+          </ul>
+        </div>
+      </section>
+      <section class="card p-4">
+        <h2 class="mb-4">Upcoming Quizzes</h2>
+        <div class="card p-4">
+          <ul class="quiz-list">
+            <li class="quiz-item mb-3">
+              <span>Quiz 4: History Basics - Due: 2024-07-10</span>
+            </li>
+            <li class="quiz-item mb-3">
+              <span>Quiz 5: Advanced Math - Due: 2024-07-15</span>
+            </li>
+          </ul>
+        </div>
+      </section>
     </main>
-</body>
+  </body>
 </html>

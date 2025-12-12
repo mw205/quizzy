@@ -1,10 +1,11 @@
-@import './style.css';
+@import './main.css';
 
 nav{
-    background-color: var(--card-bg);
+    background-color: var(--primary);
     padding: 1rem 2rem;
     box-shadow: var(--shadow);
     justify-content: space-between;
+    color: white;
 }
 
 .logo {
@@ -12,3 +13,78 @@ nav{
     font-weight: bold;
 }
 
+.btn-primary {
+    border: 1px solid var(--border-color) !important;
+}
+
+#mode{
+  padding: 0.5rem;
+  border-radius: 50%;
+  cursor: pointer;
+  margin-right: 1rem;
+}
+
+.btn-primary:hover:not(:disabled) {
+    border-color:transparent !important;
+}
+
+.dashboard-container{
+    padding: 2rem;
+    gap: 2rem;
+}
+.profile-picture-container {
+    display: flex;
+    justify-content: center;
+}
+
+#profile-picture {
+    width: 10rem;
+    height: 10rem;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--primary-color);
+}
+
+.welcomeMessage {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.profile-section {
+    align-items: center;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.progress-bar {
+    gap: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.progress-section{
+    background-color: var(--primary);
+    font-size: 2.5rem;
+    text-align: center;
+    width: 90% !important;
+    align-self: center;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+.progress-section h2{
+    color: white;
+    text-align: left;
+        line-height: 3rem;
+
+}
+
+.progress-bar .card {
+    background-color: var(--card-bg);
+    padding: 1rem 2rem;
+    min-width: 150px;
+    font-size: 1.4rem;
+}
