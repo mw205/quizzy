@@ -1,0 +1,14 @@
+@import './style.css';
+
+nav{
+    background-color: var(--card-bg);
+    padding: 1rem 2rem;
+    box-shadow: var(--shadow);
+    justify-content: space-between;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
