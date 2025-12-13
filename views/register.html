@@ -1,68 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Quizzy</title>
-    <link rel="stylesheet" href="../styles/main.css">
-</head>
+    <link rel="stylesheet" href="../styles/main.css" />
+  </head>
 
-<body>
-
+  <body>
     <div class="container login-container">
-        <h1 class="text-center mb-6">Quizzy</h1>
-        <div class="card mb-4">
-            <div class="login-form">
-                <h2 class="mb-6">
-                    Student Register
-                </h2>
-                <form action="" id="registrationForm">
-                    <div class="profile-upload">
-                        <label for="profilePic">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
-                                alt="Profile" id="profilePreview" class="profile-preview">
-                            <div class="upload-overlay">+</div>
-                        </label>
-                        <input type="file" id="profilePic" accept="image/*">
-                    </div>
-
-                    <div class="input-group">
-                        <label for="username">Username</label>
-                        <input type="text" name="username" placeholder="username" required>
-                    </div>
-
-                    <div class="input-group">
-                        <label for="name">name</label>
-                        <input type="text" name="name" placeholder="full name" required>
-                    </div>
-                    <div class="input-group">
-                        <label for="password">Password</label>
-                        <input type="password" name="password" placeholder="password" required>
-                    </div>
-                    <div class="input-group">
-                        <label for="grade">Grade</label>
-                        <select name="grade" id="grade">
-                            <option value="1">Grade 1</option>
-                            <option value="2">Grade 2</option>
-                            <option value="3">Grade 3</option>
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <label for="mobilenumber">Mobile Number</label>
-                        <input type="tel" name="mobilenumber" placeholder="20-1092219806" required>
-                    </div>
-                    <button class="btn w-full btn-primary" type="submit">Create Account</button>
-                </form>
-                <p class="text-center mt-4 mb-4"><a href="../index.html">Already have an account?</a></p>
-                <hr>
-                <p class="text-center"><a href="../views/teacher-login.html">Login As a teacher</a></p>
+      <h1 class="text-center mb-6">Quizzy</h1>
+      <div class="card mb-4">
+        <div class="login-form">
+          <h2 class="mb-6">Student Register</h2>
+          <form action="" id="registrationForm">
+            <div class="profile-upload">
+              <label for="profilePic">
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
+                  alt="Profile"
+                  id="profilePreview"
+                  class="profile-preview"
+                />
+                <div class="upload-overlay">+</div>
+              </label>
+              <input type="file" id="profilePic" accept="image/*" />
             </div>
+
+            <div class="input-group">
+              <label for="username">Username</label>
+              <input
+                type="text"
+                name="username"
+                placeholder="username"
+                required
+              />
+            </div>
+
+            <div class="input-group">
+              <label for="name">name</label>
+              <input type="text" name="name" placeholder="full name" required />
+            </div>
+            <div class="input-group">
+              <label for="password">Password</label>
+              <input
+                type="password"
+                name="password"
+                placeholder="password"
+                required
+              />
+            </div>
+            <div class="input-group">
+              <label for="grade">Grade</label>
+              <select name="grade" id="grade">
+                <option value="1">Grade 1</option>
+                <option value="2">Grade 2</option>
+                <option value="3">Grade 3</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label for="mobilenumber">Mobile Number</label>
+              <input
+                type="tel"
+                name="mobilenumber"
+                placeholder="20-1092219806"
+                required
+              />
+            </div>
+            <button class="btn w-full btn-primary" type="submit">
+              Create Account
+            </button>
+          </form>
+          <p class="text-center mt-4 mb-4">
+            <a href="../index.html">Already have an account?</a>
+          </p>
+          <hr />
+          <p class="text-center">
+            <a href="../views/teacher-login.html">Login As a teacher</a>
+          </p>
         </div>
+      </div>
     </div>
 
-
     <script type="module" src="../scripts/app.js"></script>
-</body>
-
+  </body>
 </html>
