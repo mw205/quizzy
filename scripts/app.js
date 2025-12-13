@@ -109,3 +109,27 @@ export const handleLogout = () => {
 document.addEventListener("DOMContentLoaded", () => {
   handleLogout();
 });
+
+//student dashboard
+document.addEventListener("DOMContentLoaded", () => {
+  const usernameDisplays = document.querySelectorAll(".username");
+  const gradeDisplays = document.querySelectorAll(".grade");
+  const profilePicDisplay = document.getElementById("profile-picture");
+  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+  if (profilePicDisplay) {
+    if (currentUser) {
+      profilePicDisplay.src = currentUser.profilePic;
+    }
+  }
+  gradeDisplays.forEach((el) => {
+    if (currentUser) {
+      el.textContent = `Grade: ${currentUser.grade}`;
+    }
+  });
+  usernameDisplays.forEach((el) => {
+    if (currentUser) {
+      el.textContent = currentUser.username;
+    }
+  });
+
+});
