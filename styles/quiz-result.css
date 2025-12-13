@@ -41,10 +41,10 @@ main {
   width: 40%;
   background-color: var(--primary);
   color: white;
-    padding: 3rem;
-    height: 30vh;
-    justify-content: center;
-    padding-top: 1.2rem;
+  padding: 3rem;
+  height: 30vh;
+  justify-content: center;
+  padding-top: 1.2rem;
 }
 
 .result-section {
@@ -56,22 +56,22 @@ main {
   padding: 2rem;
   border-radius: 20px;
   box-shadow: var(--shadow);
-    text-align: center;
-    height: 50vh;
-    justify-content: center;
+  text-align: center;
+  height: 50vh;
+  justify-content: center;
 }
 
-.quiz-score{
-    font-size: 3rem;
-    color: var(--primary);
+.quiz-score {
+  font-size: 3rem;
+  color: var(--primary);
 }
 
-.score-row{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 1rem 0;
-    font-weight: bold;
-    font-size: 2rem;
-    width: 110%;
+.score-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1rem 0;
+  font-weight: bold;
+  font-size: 2rem;
+  width: 110%;
 }
