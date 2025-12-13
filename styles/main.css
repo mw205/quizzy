@@ -272,3 +272,10 @@ nav {
 .text-danger {
   color: var(--danger);
 }
+#mode {
+  padding: 0.7rem;
+  border-radius: 50%;
+  cursor: pointer;
+  margin-right: 1rem;
+  margin-left: 1rem;
+}
