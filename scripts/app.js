@@ -94,3 +94,18 @@ export const handleAuthForms = (auth) => {
 document.addEventListener("DOMContentLoaded", () => {
   handleAuthForms(authService);
 });
+
+//logout functionality
+export const handleLogout = () => {
+  const logoutBtn = document.getElementById("logout");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+      localStorage.removeItem("currentUser");
+      window.location.href = "../index.html";
+    });
+  }
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+  handleLogout();
+});
