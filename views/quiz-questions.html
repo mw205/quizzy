@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quizzy - Dashboard</title>
+    <link rel="stylesheet" href="../styles/main.css" />
+    <link rel="stylesheet" href="../styles/student-quiz-style.css" />
+  </head>
+  <body>
+    <nav class="flex w-full">
+      <h1 class="logo">Quizzy</h1>
+      <div class="right flex">
+        <button class="btn btn-primary" id="mode">🌙</button>
+        <button class="btn btn-primary" id="logout">Logout</button>
+      </div>
+    </nav>
+    <main class="container flex flex-col items-center">
+      <section
+        class="card flex flex-col mt-4 quiz-question-container items-center"
+      >
+        <div class="quiz-img flex flex-col items-center">
+          <img src="../assets/img-placeholder.jpg" alt="Quiz Image" />
+        </div>
+        <div class="current-question-details-row flex w-full">
+          <p class="question-number">
+            Question <span class="current-question-count">1</span> of
+            <span class="quiz-question-count">15</span>
+          </p>
+          <p class="quiz-timer">
+            Time Left: <span class="quiz-duration">14:30</span>
+          </p>
+        </div>
+        <div class="quiz-question flex flex-col items-center">
+          <p class="mb-4 question-title">
+            Which dog breed is known for being very good at herding sheep?
+          </p>
+          <div class="answer-row">
+            <input type="radio" name="answer" id="a1" /> Border Collie
+          </div>
+          <div class="answer-row wrong-answer">
+            <input type="radio" name="answer" id="a2" /> Golden Retriever
+          </div>
+          <div class="answer-row true-answer">
+            <input type="radio" name="answer" id="a3" /> Beagle
+          </div>
+          <div class="answer-row">
+            <input type="radio" name="answer" id="a4" /> Pug
+          </div>
+        </div>
+        <button class="btn btn-primary quiz-btn mb-4" disabled>Next</button>
+      </section>
+    </main>
+  </body>
+</html>
