@@ -17,7 +17,7 @@
                 <h2 class="mb-6">
                     Student Register
                 </h2>
-                <form action="">
+                <form action="" id="registrationForm">
                     <div class="profile-upload">
                         <label for="profilePic">
                             <img src="https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
@@ -31,6 +31,11 @@
                         <label for="username">Username</label>
                         <input type="text" name="username" placeholder="username" required>
                     </div>
+
+                    <div class="input-group">
+                        <label for="name">name</label>
+                        <input type="text" name="name" placeholder="full name" required>
+                    </div>
                     <div class="input-group">
                         <label for="password">Password</label>
                         <input type="password" name="password" placeholder="password" required>
@@ -38,14 +43,14 @@
                     <div class="input-group">
                         <label for="grade">Grade</label>
                         <select name="grade" id="grade">
-                            <option value="grade1">Grade 1</option>
-                            <option value="grade2">Grade 2</option>
-                            <option value="grade3">Grade 3</option>
+                            <option value="1">Grade 1</option>
+                            <option value="2">Grade 2</option>
+                            <option value="3">Grade 3</option>
                         </select>
                     </div>
                     <div class="input-group">
                         <label for="mobilenumber">Mobile Number</label>
-                        <input type="mobilenumber" name="mobilenumber" placeholder="20-1092219806" required>
+                        <input type="tel" name="mobilenumber" placeholder="20-1092219806" required>
                     </div>
                     <button class="btn w-full btn-primary" type="submit">Create Account</button>
                 </form>

@@ -1,46 +1,55 @@
-import { compressImage } from "../utils/utils";
-export function handleRegistration(form) {
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
+import Student from "../models/student.js";
+export default class AuthService {
+  constructor(storageService) {
+    this.storageService = storageService;
+  }
 
-    const username = form.username.value;
-    const password = form.password.value;
-    const grade = form.grade.value;
-    const mobile = form.mobilenumber.value;
-    const profilePicInput = document.getElementById("profilePic");
-
-    // Check if user already exists
-    const users = JSON.parse(localStorage.getItem("users") || "[]");
-    if (users.find((u) => u.username === username)) {
-      alert("Username already exists!");
-      return;
+  async loginAsStudent(username, password) {
+    const user = this.storageService
+      .getUsers()
+      .find(
+        (user) =>
+          user.username === username &&
+          user.role === "student" &&
+          user.password === password
+      );
+    if (user) {
+      localStorage.setItem("currentUser", JSON.stringify(user));
+      return true;
+    } else {
+      alert("Invalid username or password");
     }
-
-    let profilePicBase64 = null;
-
-    try {
-      if (profilePicInput.files && profilePicInput.files[0]) {
-        profilePicBase64 = await compressImage(profilePicInput.files[0]);
-      }
-
-      const newUser = {
-        id: Date.now(),
-        username,
-        password,
-        grade,
-        mobile,
-        role: "student",
-        profilePic: profilePicBase64, // Stores small Base64 string or null
-      };
-
-      users.push(newUser);
-      localStorage.setItem("users", JSON.stringify(users));
-
-      alert("Registration successful! Please login.");
-      window.location.href = "../index.html";
-    } catch (error) {
-      console.error("Error saving user:", error);
-      alert("An error occurred during registration.");
+    return false;
+  }
+  async loginAsTeacher(username, password) {
+    const user = this.storageService
+      .getUsers()
+      .find(
+        (user) =>
+          user.username === username &&
+          user.role === "teacher" &&
+          user.password === password
+      );
+    if (user) {
+      return true;
+    } else {
+      alert("Invalid username or password");
     }
-  });
+    return;
+  }
+  async registerStudent(data) {
+    const users = this.storageService.getUsers();
+    if (users.some((u) => u.username === data.username)) {
+      alert("username is already taken.");
+      throw new Error("Username is already taken.");
+    }
+    const student = new Student({
+      ...data,
+      id: "student_" + this.storageService.getUsers().length + 1,
+      role: "student",
+      profilePic: data.profilePic,
+    });
+    this.storageService.addUser(student);
+    return;
+  }
 }
