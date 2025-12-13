@@ -21,6 +21,7 @@ nav {
 
 .btn-primary {
   border: 1px solid var(--border-color) !important;
+  cursor: pointer;
 }
 
 .btn-primary:hover:not(:disabled) {
@@ -100,7 +101,7 @@ nav {
   width: 90%;
   border-radius: 15px;
   box-shadow: var(--shadow);
-  transition: background-color 0.3s ease;
+  transition: 0.3s ease;
 }
 
 input[type="radio"] {
@@ -159,7 +160,7 @@ input[type="radio"]:checked {
   border-radius: 10px;
   box-shadow: var(--shadow);
   height: 3.5rem;
-  transition: transform 0.3s ease;
+  transition: 0.3s ease;
   cursor: pointer;
   display: flex;
   align-items: center;

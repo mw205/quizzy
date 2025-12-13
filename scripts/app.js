@@ -9,7 +9,27 @@ export const handleAuthForms = (auth) => {
     document.getElementById("loginForm") ||
     document.getElementById("teacherLoginForm");
   if (loginForm) {
-    //Todo: complete the logic of login form
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const username = form.username.value;
+      const password = form.password.value;
+      let success = false;
+      if (form.id === "loginForm") {
+        success = await auth.loginAsStudent(username, password);
+      } else {
+        success = await auth.loginAsTeacher(username, password);
+      }
+      if (success) {
+        alert("Login successful!");
+        form.reset();
+        if (form.id === "loginForm") {
+          window.location.href = "../views/student-dashboard.html";
+        } else {
+          window.location.href = "../views/teacher-dashboard.html";
+        }
+      }
+    });
   }
   const registrationForm = document.getElementById("registrationForm");
   if (registrationForm) {
@@ -62,7 +82,7 @@ export const handleAuthForms = (auth) => {
         });
         alert("Registration successful!");
         form.reset();
-        window.location.href = "../views/studentDashboard.html";
+        window.location.href = "../views/student-dashboard.html";
       } catch (error) {
         console.error("Error saving user:", error);
         alert("An error occurred during registration: " + error.message);
@@ -72,8 +92,5 @@ export const handleAuthForms = (auth) => {
 };
 
 document.addEventListener("DOMContentLoaded", () => {
-  const path = window.location.pathname;
-  if (path.includes("register.html")) {
-    handleAuthForms(authService);
-  }
+  handleAuthForms(authService);
 });
