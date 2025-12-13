@@ -1,10 +1,11 @@
 export default class Results {
-  constructor(id, studentId, examId, score, totalScore, date) {
-    this.id = id;
-    this.studentId = studentId;
-    this.examId = examId;
-    this.score = score;
-    this.totalScore = totalScore;
-    this.date = date;
+  constructor(data) {
+    this.id = data.id;
+    this.studentId = data.studentId;
+    this.examId = data.examId;
+    this.score = data.score;
+    this.totalScore = data.totalScore;
+    this.date = data.date || new Date().toISOString();
+    this.answers = data.answers || {};
   }
 }
