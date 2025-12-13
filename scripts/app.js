@@ -91,11 +91,6 @@ export const handleAuthForms = (auth) => {
   }
 };
 
-document.addEventListener("DOMContentLoaded", () => {
-  handleAuthForms(authService);
-});
-
-//logout functionality
 export const handleLogout = () => {
   const logoutBtn = document.getElementById("logout");
   if (logoutBtn) {
@@ -107,29 +102,40 @@ export const handleLogout = () => {
 };
 
 document.addEventListener("DOMContentLoaded", () => {
+  handleAuthForms(authService);
   handleLogout();
-});
 
-//student dashboard
-document.addEventListener("DOMContentLoaded", () => {
   const usernameDisplays = document.querySelectorAll(".username");
   const gradeDisplays = document.querySelectorAll(".grade");
   const profilePicDisplay = document.getElementById("profile-picture");
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-  if (profilePicDisplay) {
-    if (currentUser) {
-      profilePicDisplay.src = currentUser.profilePic;
+
+  if (window.location.pathname.includes("student-dashboard.html")) {
+    if (profilePicDisplay) {
+      if (currentUser) {
+        profilePicDisplay.src = currentUser.profilePic;
+      }
+    }
+    gradeDisplays.forEach((el) => {
+      if (currentUser) {
+        el.textContent = `Grade: ${currentUser.grade}`;
+      }
+    });
+    usernameDisplays.forEach((el) => {
+      if (currentUser) {
+        el.textContent = currentUser.username;
+      }
+    });
+  }
+
+  // Teacher Dashboard specific logic
+  if (window.location.pathname.includes("teacher-dashboard.html")) {
+    if (!currentUser || currentUser.role !== "teacher") {
+      window.location.href = "../index.html"; // Redirect to login if not a teacher
+    } else {
+      usernameDisplays.forEach((el) => {
+        el.textContent = currentUser.username;
+      });
     }
   }
-  gradeDisplays.forEach((el) => {
-    if (currentUser) {
-      el.textContent = `Grade: ${currentUser.grade}`;
-    }
-  });
-  usernameDisplays.forEach((el) => {
-    if (currentUser) {
-      el.textContent = currentUser.username;
-    }
-  });
-
 });

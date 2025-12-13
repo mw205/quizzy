@@ -53,4 +53,25 @@ export default class AuthService {
     this.storageService.addUser(student);
     return true;
   }
+  getCurrentUser() {
+    return JSON.parse(localStorage.getItem("currentUser"));
+  }
+  //to ensure that the user is authorized and authenticated
+  requireAuth(role) {
+    const currentUser = this.getCurrentUser();
+    if (!currentUser) {
+      if (role === "teacher") {
+        window.location.href = "../views/teacher-login.html";
+      } else {
+        window.location.href = "../views/student-login.html";
+      }
+      return null;
+    }
+    // handle incorrect role
+    if (role !== currentUser.role) {
+      window.location.href = "../views/index.html";
+      return null;
+    }
+    return currentUser;
+  }
 }
