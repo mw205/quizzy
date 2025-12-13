@@ -1,0 +1,205 @@
+@import "./main.css";
+
+nav {
+  background-color: var(--primary);
+  padding: 1rem 2rem;
+  box-shadow: var(--shadow);
+  justify-content: space-between;
+  color: white;
+}
+
+.logo {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.btn-primary {
+  border: 1px solid var(--border-color) !important;
+}
+
+#mode {
+  padding: 0.7rem;
+  border-radius: 50%;
+  cursor: pointer;
+  margin-right: 1rem;
+  margin-left: 1rem;
+}
+
+.btn-primary:hover:not(:disabled) {
+  border-color: transparent !important;
+}
+
+.dashboard-container {
+  gap: 2rem;
+}
+
+.profile-picture-container {
+  display: flex;
+  justify-content: center;
+}
+
+#profile-picture {
+  width: 10rem;
+  height: 10rem;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--primary-color);
+}
+
+.welcomeMessage {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.profile-section {
+  align-items: center;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.progress-bar {
+  gap: 5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.progress-section {
+  background-color: var(--primary);
+  font-size: 2.5rem;
+  text-align: center;
+  align-self: center;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.progress-section h2 {
+  color: white;
+  text-align: left;
+  line-height: 3rem;
+}
+
+.progress-bar .card {
+  background-color: var(--card-bg);
+  padding: 2rem 3rem;
+  min-width: 100px;
+  font-size: 1.4rem;
+  box-shadow: var(--shadow);
+}
+
+.progress-bar .card:hover {
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
+}
+
+.quiz-section,
+.done-quiz-section {
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.quiz-section h3,
+.done-quiz-section h3 {
+  font-size: 3rem;
+}
+
+.quiz-list {
+  list-style-type: none;
+  padding: 0;
+  gap: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.quiz-item {
+  width: 30%;
+  padding: 1rem;
+  box-shadow: var(--shadow);
+  gap: 1rem;
+  border-top: 8px solid var(--primary);
+  min-width: 10rem;
+}
+
+.quiz-item:hover {
+  transform: scale(1.02);
+  transition: transform 0.3s ease;
+}
+
+.quiz-item .btn {
+  margin-top: auto;
+}
+
+.quiz-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.quiz-duration,
+.quiz-question-count,
+.quiz-date {
+  font-size: 1rem;
+  color: var(--text-muted);
+}
+
+.quiz-img {
+  width: 100%;
+  height: 15rem;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.quiz-score{
+    font-size: 3rem;
+    color: var(--primary);
+}
+
+@media (max-width: 800px) {
+  .progress-bar {
+    gap: 1rem;
+  }
+  h1,
+  h2,
+  h3 {
+    font-size: 2rem;
+  }
+  .quiz-item {
+    width: 50%;
+  }
+  .quiz-section h3,
+  .done-quiz-section h3 {
+    font-size: 1.2rem;
+  }
+  .quiz-img{
+    height: 10rem;
+  }
+  .logo {
+    font-size: 1.5rem;
+  }
+  .btn-primary {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.5rem;
+  }
+  nav{
+    padding: 1rem;
+  }
+  .profile-section h2 {
+    font-size: 1.2rem;
+  }
+  .profile-picture-container{
+    margin-bottom: 1rem;
+  }
+  .profile-picture-container #profile-picture {
+    width: 8rem;
+    height: 8rem;
+  }
+  .progress-bar .card {
+    padding: 1rem;
+    font-size: 1rem;
+}
+#mode {
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+  }
+}
