@@ -1,0 +1,93 @@
+@import "./main.css";
+
+html,
+body {
+  height: fit-content !important;
+  overflow: auto !important;
+}
+
+nav {
+  background-color: var(--primary);
+  padding: 1rem 2rem;
+  box-shadow: var(--shadow);
+  justify-content: space-between;
+  color: white;
+}
+
+.logo {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.btn-primary {
+  border: 1px solid var(--border-color) !important;
+}
+
+.btn-primary:hover:not(:disabled) {
+  border-color: transparent !important;
+}
+
+.quiz-instruction-container {
+  margin-top: 1rem;
+  width: 50%;
+  min-width: fit-content;
+  height: fit-content;
+  padding: 0;
+  border-radius: 20px;
+}
+
+.quiz-title {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.quiz-header {
+  border-bottom: 1px solid var(--border-color);
+  width: 100%;
+  background-color: var(--primary);
+  color: white;
+  border-radius: 20px 20px 0 0;
+  padding: 2rem;
+}
+
+.quiz-instructions {
+  font-size: 1.2rem;
+  padding: 1rem 2rem;
+}
+.quiz-details{
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.quiz-details .card{
+    padding: 2rem;
+    font-size: 2rem;
+}
+
+.instructions-list{
+    list-style-type: none;
+    padding-left: 1.5rem;
+}
+.instructions-list li {
+    margin-bottom: 0.75rem;
+    position: relative;
+    padding-left: 1.5rem;
+}
+.instructions-list li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: var(--primary);
+    font-size: 1.5rem;
+    line-height: 1;
+    top: 0;
+}
+.good-luck-message {
+  font-size: 1.25rem;
+  font-weight: bold;
+  text-align: center;
+  padding: 2rem;
+}

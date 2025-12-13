@@ -1,5 +1,10 @@
 @import "./main.css";
 
+html,body{
+  height: fit-content !important;
+  overflow: auto !important;
+}
+
 nav {
   background-color: var(--primary);
   padding: 1rem 2rem;
