@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Quizzy - Dashboard</title>
     <link rel="stylesheet" href="../styles/main.css" />
-    <link rel="stylesheet" href="../styles/studentDashboardStyle.css" />
+    <link rel="stylesheet" href="../styles/student-dashboard-style.css" />
   </head>
   <body>
     <nav class="flex w-full">
@@ -17,7 +17,7 @@
     </nav>
     <main class="container dashboard-container flex flex-col">
       <!-- Welcome Message & Profile Picture -->
-      <section class="card p-4 flex profile-section w-full">
+      <section class="card flex profile-section w-full">
         <div class="welcomeMessage">
           <h2>
             Welcome back, <span class="username">emma_lion</span>! 🎉 <br />
@@ -38,9 +38,9 @@
       </section>
 
       <!-- Progress section -->
-      <section class="card p-4 progress-section w-full">
+      <section class="card progress-section w-full">
         <h2>Your <br />Progress</h2>
-        <div class="p-4 flex progress-bar">
+        <div class="flex progress-bar">
           <p class="card mb-2 flex flex-col items-center">
             <span class="icon">🏆</span>Quizzes Taken: <strong>5</strong>
           </p>
@@ -53,12 +53,12 @@
         <hr />
       <!-- Available Quizzes Section -->
       <section>
-        <div class="p-4 quiz-section flex flex-col">
+        <div class="quiz-section flex flex-col">
           <h3 class="mb-4">📖 Your Assignments</h3>
           <ul class="quiz-list flex gap-4 w-full">
             <li class="quiz-item card flex flex-col gap-6">
               <img
-                src="../assets/img-placeholder"
+                src="../assets/img-placeholder.jpg"
                 alt="Quiz Image"
                 class="quiz-img"
               />
@@ -69,7 +69,7 @@
             </li>
             <li class="quiz-item card flex flex-col gap-6">
               <img
-                src="../assets/img-placeholder"
+                src="../assets/img-placeholder.jpg"
                 alt="Quiz Image"
                 class="quiz-img"
               />
@@ -84,12 +84,12 @@
       <hr />
         <!-- Completed Quizzes Section -->
       <section>
-        <div class="container p-4 done-quiz-section flex flex-col">
+        <div class="container done-quiz-section flex flex-col">
           <h3 class="mb-4">✅ Completed Quizzes</h3>
           <ul class="quiz-list flex gap-4 w-full">
             <li class="quiz-item card flex flex-col gap-6">
               <img
-                src="../assets/img-placeholder"
+                src="../assets/img-placeholder.jpg"
                 alt="Quiz Image"
                 class="quiz-img"
               />
@@ -99,7 +99,7 @@
             </li>
             <li class="quiz-item card flex flex-col gap-6">
               <img
-                src="../assets/img-placeholder"
+                src="../assets/img-placeholder.jpg"
                 alt="Quiz Image"
                 class="quiz-img"
               />
@@ -110,20 +110,6 @@
           </ul>
         </div>
       </section>
-
-      <!-- <section class="card p-4">
-        <h2 class="mb-4">Upcoming Quizzes</h2>
-        <div class="card p-4">
-          <ul class="quiz-list">
-            <li class="quiz-item mb-3">
-              <span>Quiz 4: History Basics - Due: 2024-07-10</span>
-            </li>
-            <li class="quiz-item mb-3">
-              <span>Quiz 5: Advanced Math - Due: 2024-07-15</span>
-            </li>
-          </ul>
-        </div>
-      </section> -->
     </main>
   </body>
 </html>
