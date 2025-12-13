@@ -4,7 +4,7 @@ class Exam {
     this.creatorId = data.creatorId;
     this.title = data.title;
     this.durationMinutes = parseInt(data.durationMinutes);
-    this.questions = questions;
+    this.questions = data.questions || [];
   }
   get totalScore() {
     return this.questions.reduce(
