@@ -31,11 +31,12 @@ export default class AuthService {
           user.password === password
       );
     if (user) {
+      localStorage.setItem("currentUser", JSON.stringify(user));
       return true;
     } else {
       alert("Invalid username or password");
     }
-    return;
+    return false;
   }
   async registerStudent(data) {
     const users = this.storageService.getUsers();
@@ -50,6 +51,6 @@ export default class AuthService {
       profilePic: data.profilePic,
     });
     this.storageService.addUser(student);
-    return;
+    return true;
   }
 }
