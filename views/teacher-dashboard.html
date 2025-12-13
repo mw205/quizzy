@@ -5,10 +5,116 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teacher Dashboard</title>
+    <link rel="stylesheet" href="../styles/teacher-dashboard.css">
+
 </head>
 
 <body>
-    Hello
+    <div class="app-layout flex">
+        <aside class="sidebar flex flex-col">
+            <h1 class="logo">Quizzy</h1>
+
+            <button class="nav-btn w-full">
+                📊 Results
+            </button>
+            <button class="nav-btn w-full">
+                🧾 My Exams
+            </button>
+            <button class="nav-btn w-full">
+                ➕ Create Exam
+            </button>
+        </aside>
+        <div class="main-content flex flex-col">
+
+            <header>
+                <nav class="flex w-full justify-between">
+                    <p>
+                        Welcome, <b>Professor Smith</b>
+                    </p>
+                    <div>
+                        <button class="btn btn-primary" id="mode">🌙</button>
+                        <button class="btn btn-primary" id="logout">Logout</button>
+                    </div>
+                </nav>
+            </header>
+            <div class="scrollable-area">
+                <div class="results-tab">
+                    <h3>Student Results</h3>
+                    <div class="card table-container">
+                        <table class="w-full">
+                            <thead>
+                                <tr>
+                                    <th>STUDENT</th>
+                                    <th>EXAM</th>
+                                    <th>SCORE</th>
+                                    <th>DATE</th>
+                                </tr>
+                            </thead>
+
+                        </table>
+
+                    </div>
+
+                </div>
+                <div class="exams-tab">
+                    <h3>
+                        Manage Exams
+                    </h3>
+                    <div id="exams-list" class="flex-col gap-2">
+                        <div class="card flex justify-between items-center mb-2">
+                            <div>
+                                <strong>Exam Title</strong>
+                                <br>
+                                <span class="text-sm text-muted">15 Qs . Assigned</span>
+
+                            </div>
+                            <button class="btn btn-outline">
+                                Assign
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="create-exam">
+                    <h3>Create New Exam</h3>
+                    <form class="card" action="" id="create-exam-form">
+                        <div class="grid-2">
+                            <div class="input-group">
+                                <label for="exam-name">
+                                    Exam Name
+                                </label>
+                                <input type="text" name="exam-name" placeholder="e.g. Planets">
+                            </div>
+                            <div class="input-group">
+                                <label for="exam-duration">
+                                    Exam Duration
+                                </label>
+                                <input type="number" name="exam-duration" placeholder="15" value="15">
+
+                            </div>
+                        </div>
+                        <div class="sticky-top flex justify-between items-center">
+                            <h3>Questions</h3>
+                            <div>
+                                <span class="text-muted">0/15 Qs</span>
+                                <span class="text-danger">0/100 Pts</span>
+                            </div>
+                        </div>
+                        <div id="questionsContainer"></div>
+                        <div class="grid-2">
+                            <button class="btn btn-outline" type="button">
+                                + Add Questions
+                            </button>
+                            <button class="btn btn-primary" type="submit">
+                                💾 Save Exam
+                            </button>
+                        </div>
+                </div>
+                </form>
+
+            </div>
+
+        </div>
+    </div>
 </body>
 
 </html>
