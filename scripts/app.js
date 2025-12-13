@@ -52,7 +52,7 @@ export const handleAuthForms = (auth) => {
       }
 
       try {
-        await authService.registerStudent({
+        await auth.registerStudent({
           name,
           username,
           password,

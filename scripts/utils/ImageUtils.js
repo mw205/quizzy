@@ -1,5 +1,5 @@
 export class ImageUtils {
-  static compress(file, maxWidth = 800, quality = 0.7) {
+  static compress(file, quality = 0.7) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
