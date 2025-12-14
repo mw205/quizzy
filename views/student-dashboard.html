@@ -33,7 +33,7 @@
             />
           </div>
           <h2 class="mb-2"><span class="username">username</span></h2>
-          <p class="mb-4 grade">Grade: </p>
+          <p class="mb-4 grade">Grade:</p>
         </div>
       </section>
 
@@ -42,10 +42,10 @@
         <h2>Your <br />Progress</h2>
         <div class="flex progress-bar">
           <p class="card mb-2 flex flex-col items-center">
-            <span class="icon">🏆</span>Quizzes Taken: <strong>5</strong>
+            <span class="icon">🏆</span>Quizzes Taken: <strong id="statCompleted">5</strong>
           </p>
           <p class="card mb-2 flex flex-col items-center">
-            <span class="icon">⭐</span>Average Score: <strong>80%</strong>
+            <span class="icon">⭐</span>Average Score: <strong id="statAvg">80%</strong>
           </p>
         </div>
       </section>
@@ -55,7 +55,7 @@
       <section>
         <div class="quiz-section flex flex-col">
           <h3 class="mb-4">📖 Your Assignments</h3>
-          <ul class="quiz-list flex gap-4 w-full">
+          <ul class="quiz-list flex gap-4 w-full" id="pendingList">
             <li class="quiz-item card flex flex-col gap-6">
               <img
                 src="../assets/img-placeholder.jpg"
@@ -65,7 +65,9 @@
               <span class="quiz-title">Quiz 1: Basic Math</span>
               <span class="quiz-duration">⏱️ 15 minutes</span>
               <span class="quiz-question-count">📖 15 questions</span>
-              <button class="btn btn-primary btn-sm">Start Quiz</button>
+              <button class="btn btn-primary btn-sm btn-start">
+                Start Quiz
+              </button>
             </li>
             <li class="quiz-item card flex flex-col gap-6">
               <img
@@ -96,6 +98,9 @@
               <span class="quiz-title">Quiz 1: Basic Math</span>
               <span class="quiz-score">87%</span>
               <span class="quiz-date">Completed 12/10/2025</span>
+              <button class="btn btn-primary btn-sm btn-reveiw">
+                Review Quiz
+              </button>
             </li>
             <li class="quiz-item card flex flex-col gap-6">
               <img
@@ -106,6 +111,9 @@
               <span class="quiz-title">Quiz 1: Basic Math</span>
               <span class="quiz-score">87%</span>
               <span class="quiz-date">Completed 12/10/2025</span>
+              <button class="btn btn-primary btn-sm btn-reveiw">
+                Review Quiz
+              </button>
             </li>
           </ul>
         </div>
