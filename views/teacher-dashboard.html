@@ -14,13 +14,13 @@
         <aside class="sidebar flex flex-col">
             <h1 class="logo">Quizzy</h1>
 
-            <button class="nav-btn w-full">
+            <button class="nav-btn w-full" data-tab="resultsTab">
                 📊 Results
             </button>
-            <button class="nav-btn w-full">
+            <button class="nav-btn w-full" data-tab="examsTab">
                 🧾 My Exams
             </button>
-            <button class="nav-btn w-full">
+            <button class="nav-btn w-full" data-tab="createExamTab">
                 ➕ Create Exam
             </button>
         </aside>
@@ -36,7 +36,7 @@
                 </nav>
             </header>
             <div class="scrollable-area">
-                <div class="results-tab">
+                <div class="tab-content" id="resultsTab">
                     <h3>Student Results</h3>
                     <div class="card table-container">
                         <table class="w-full">
@@ -54,7 +54,7 @@
                     </div>
 
                 </div>
-                <div class="exams-tab">
+                <div class="tab-content" id="examsTab">
                     <h3>
                         Manage Exams
                     </h3>
@@ -72,7 +72,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="create-exam">
+                <div class="tab-content" id="createExamTab">
                     <h3>Create New Exam</h3>
                     <form class="card" action="" id="create-exam-form">
                         <div class="grid-2">
