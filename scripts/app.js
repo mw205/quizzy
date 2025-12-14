@@ -1,3 +1,4 @@
+import TeacherController from "./controllers/teacher_controller.js";
 import AuthService from "./services/auth_service.js";
 import StorageService from "./services/storage_service.js";
 import { ImageUtils } from "./utils/ImageUtils.js";
@@ -133,9 +134,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!currentUser || currentUser.role !== "teacher") {
       window.location.href = "../index.html"; // Redirect to login if not a teacher
     } else {
-      usernameDisplays.forEach((el) => {
-        el.textContent = currentUser.username;
-      });
+      new TeacherController(authService, storageService);
     }
   }
 });
