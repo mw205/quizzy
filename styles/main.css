@@ -285,3 +285,12 @@ nav {
 .hidden {
   display: none;
 }
+.text-danger {
+  color: var(--danger);
+}
+.text-success {
+  color: var(--success);
+}
+.text-bold {
+  font-weight: bold;
+}

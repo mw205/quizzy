@@ -1,5 +1,7 @@
 import { initialData } from "../data/initial_data.js";
+import Assignment from "../models/assignments.js";
 import { Exam } from "../models/exam.js";
+import Result from "../models/results.js";
 import Student from "../models/student.js";
 import Teacher from "../models/teacher.js";
 export default class StorageService {
