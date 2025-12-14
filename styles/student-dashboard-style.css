@@ -40,7 +40,6 @@ nav {
   height: 10rem;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid var(--primary-color);
 }
 
 .welcomeMessage {
