@@ -33,7 +33,9 @@ export default class StorageService {
       u.role === "teacher" ? new Teacher(u) : new Student(u)
     );
   }
-
+  getStudents() {
+    return this.getUsers().filter((student) => student.role === "student");
+  }
   getExams() {
     return this._get("exams").map((e) => new Exam(e));
   }

@@ -83,3 +83,8 @@ table {
 td {
   font-size: 1rem;
 }
+
+#studentList {
+  min-height: 300px;
+  overflow-y: auto;
+}
