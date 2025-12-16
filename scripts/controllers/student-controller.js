@@ -1,9 +1,9 @@
-export class StudentController {
+export default class StudentController {
   constructor(authService, storageService) {
     this.auth = authService;
     this.storageService = storageService;
     this.user = this.auth.requireAuth("student");
-    if (!this.user) {
+    if (this.user) {
       this.init();
       window.studentApp = this;
     }
@@ -36,10 +36,13 @@ export class StudentController {
   }
 
   attachEvents() {
-    document.querySelector("main").addEventListener("click", (e) => {
+    const mainEl = document.querySelector("main");
+    if (!mainEl) return;
+    mainEl.addEventListener("click", (e) => {
       if (e.target.classList.contains("btn-start")) {
         localStorage.setItem("activeExamId", e.target.dataset.id);
-        window.location.href = "instructions.html";
+        // student-dashboard.html is in /views, instructions file is named quiz-instructions.html
+        window.location.href = "quiz-instructions.html";
       }
       if (e.target.classList.contains("btn-review")) {
         localStorage.setItem("activeResultId", e.target.dataset.id);
@@ -54,10 +57,10 @@ export class StudentController {
 
   renderDashboard() {
     // 1. Get Assignments for this student
-    const myAssignments = this.storage
+    const myAssignments = this.storageService
       .getAssignments()
       .filter((a) => a.studentId === this.user.id);
-    const myResults = this.storage
+    const myResults = this.storageService
       .getResults()
       .filter((r) => r.studentId === this.user.id);
     const completedExamIds = myResults.map((r) => r.examId);
@@ -68,42 +71,81 @@ export class StudentController {
     );
 
     // 3. Resolve Exam Objects
-    const allExams = this.storage.getExams();
+    const allExams = this.storageService.getExams();
 
     // Stats
     const totalScore = myResults.reduce((sum, r) => sum + r.score, 0);
     const maxScore = myResults.reduce((sum, r) => sum + r.totalScore, 0);
     const avg = maxScore > 0 ? Math.round((totalScore / maxScore) * 100) : 0;
 
-    document.getElementById("statCompleted").innerText = myResults.length;
-    document.getElementById("statAvg").innerText = avg + "%";
+    const statCompletedEl = document.getElementById("statCompleted");
+    if (statCompletedEl) statCompletedEl.innerText = myResults.length;
+    const statAvgEl = document.getElementById("statAvg");
+    if (statAvgEl) statAvgEl.innerText = avg + "%";
 
     // Render Pending
     const pendingEl = document.getElementById("pendingList");
-    if (pendingAssignments.length) {
-      pendingEl.innerHTML = pendingAssignments
-        .map((a) => {
-          const exam = allExams.find((e) => e.id === a.examId);
-          if (!exam) return "";
-          return `
-            <li class="quiz-item card flex flex-col gap-6">
-              <img
-                src="../assets/img-placeholder.jpg"
-                alt="Quiz Image"
-                class="quiz-img"
-              />
-              <span class="quiz-title">${exam.title}</span>
-              <span class="quiz-duration">⏱️ ${exam.durationMinutes} Minutes</span>
-              <span class="quiz-question-count">📖 ${exam.questionsCount} Questions</span>
-              <button class="btn btn-primary btn-sm btn-start" data-id="${exam.id}">
-                Start Quiz
-              </button>
-            </li>`;
-        })
-        .join("");
-    } else {
-      pendingEl.innerHTML =
-        '<p class="text-muted text-center col-span-2">No pending exams.</p>';
+    if (pendingEl) {
+      if (pendingAssignments.length) {
+        pendingEl.innerHTML = pendingAssignments
+          .map((a) => {
+            const exam = allExams.find((e) => e.id === a.examId);
+            if (!exam) return "";
+            return `
+              <li class="quiz-item card flex flex-col gap-6">
+                <img
+                  src="../assets/img-placeholder.jpg"
+                  alt="Quiz Image"
+                  class="quiz-img"
+                />
+                <span class="quiz-title">${exam.title}</span>
+                <span class="quiz-duration">⏱️ ${exam.durationMinutes} Minutes</span>
+                <span class="quiz-question-count">📖 ${exam.questionsCount} Questions</span>
+                <button class="btn btn-primary btn-sm btn-start" data-id="${exam.id}">
+                  Start Quiz
+                </button>
+              </li>`;
+          })
+          .join("");
+      } else {
+        pendingEl.innerHTML =
+          '<p class="text-muted text-center col-span-2">No pending exams.</p>';
+      }
+    }
+
+    // Render History
+    const historyEl = document.getElementById("completedList");
+    if (historyEl) {
+      if (myResults.length) {
+        historyEl.innerHTML = myResults
+          .map((r) => {
+            const exam = allExams.find((e) => e.id === r.examId) || {
+              title: "Unknown",
+            };
+            return `
+              <li class="quiz-item card flex flex-col gap-6">
+                <img
+                  src="../assets/img-placeholder.jpg"
+                  alt="Quiz Image"
+                  class="quiz-img"
+                />
+                <span class="quiz-title">${exam.title}</span>
+                <span class="quiz-score">${r.score}/${r.totalScore}</span>
+                <span class="quiz-date">Completed ${new Date(
+                  r.date
+                ).toLocaleDateString()}</span>
+                <button class="btn btn-primary btn-sm btn-review" data-id="${
+                  r.id
+                }">
+                  Review Quiz
+                </button>
+              </li>`;
+          })
+          .join("");
+      } else {
+        historyEl.innerHTML =
+          '<p class="text-muted text-center">No history yet.</p>';
+      }
     }
   }
 }
