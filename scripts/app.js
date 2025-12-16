@@ -1,4 +1,5 @@
 import TeacherController from "./controllers/teacher_controller.js";
+import StudentController from "./controllers/student-controller.js";
 import AuthService from "./services/auth_service.js";
 import StorageService from "./services/storage_service.js";
 import { ImageUtils } from "./utils/ImageUtils.js";
@@ -25,9 +26,11 @@ export const handleAuthForms = (auth) => {
         alert("Login successful!");
         form.reset();
         if (form.id === "loginForm") {
-          window.location.href = "../views/student-dashboard.html";
+          // index.html lives at project root
+          window.location.href = "views/student-dashboard.html";
         } else {
-          window.location.href = "../views/teacher-dashboard.html";
+          // teacher login lives in /views so use relative path within the folder
+          window.location.href = "teacher-dashboard.html";
         }
       }
     });
@@ -83,7 +86,8 @@ export const handleAuthForms = (auth) => {
         });
         alert("Registration successful!");
         form.reset();
-        window.location.href = "../views/student-dashboard.html";
+        // register.html is in /views, so navigate within the same folder
+        window.location.href = "student-dashboard.html";
       } catch (error) {
         console.error("Error saving user:", error);
         alert("An error occurred during registration: " + error.message);
@@ -106,29 +110,6 @@ document.addEventListener("DOMContentLoaded", () => {
   handleAuthForms(authService);
   handleLogout();
 
-  const usernameDisplays = document.querySelectorAll(".username");
-  const gradeDisplays = document.querySelectorAll(".grade");
-  const profilePicDisplay = document.getElementById("profile-picture");
-  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-
-  if (window.location.pathname.includes("student-dashboard.html")) {
-    if (profilePicDisplay) {
-      if (currentUser) {
-        profilePicDisplay.src = currentUser.profilePic;
-      }
-    }
-    gradeDisplays.forEach((el) => {
-      if (currentUser) {
-        el.textContent = `Grade: ${currentUser.grade}`;
-      }
-    });
-    usernameDisplays.forEach((el) => {
-      if (currentUser) {
-        el.textContent = currentUser.username;
-      }
-    });
-  }
-
   // Teacher Dashboard specific logic
   if (window.location.pathname.includes("teacher-dashboard.html")) {
     if (!currentUser || currentUser.role !== "teacher") {
@@ -136,5 +117,18 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       new TeacherController(authService, storageService);
     }
+  }
+
+  const path = window.location.pathname;
+  if (path.includes("teacher-dashboard")) {
+    new TeacherController(authService, storageService);
+  } else if (path.includes("student-dashboard")) {
+    new StudentController(authService, storageService);
+  } else if (path.includes("quiz-questions.html")) {
+    new ExamController(authService, storageService, "player");
+  } else if (path.includes("student-result.html")) {
+    new ExamController(authService, storageService, "results");
+  } else if (path.includes("quiz-instructions.html")) {
+    if (!authService.requireAuth("student")) return;
   }
 });

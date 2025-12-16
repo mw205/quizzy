@@ -9,7 +9,7 @@
   </head>
   <body>
     <nav class="flex w-full">
-      <h1 class="logo">Quizzy</h1>
+      <h1 class="logo"><img src="../assets/logo.png" alt="Quizzy Logo" width="100"></h1>
       <div class="right flex">
         <button class="btn btn-primary" id="mode">🌙</button>
         <button class="btn btn-primary" id="logout">Logout</button>
@@ -88,7 +88,7 @@
       <section>
         <div class="container done-quiz-section flex flex-col">
           <h3 class="mb-4">✅ Completed Quizzes</h3>
-          <ul class="quiz-list flex gap-4 w-full">
+          <ul class="quiz-list flex gap-4 w-full" id="completedList">
             <li class="quiz-item card flex flex-col gap-6">
               <img
                 src="../assets/img-placeholder.jpg"
@@ -98,7 +98,7 @@
               <span class="quiz-title">Quiz 1: Basic Math</span>
               <span class="quiz-score">87%</span>
               <span class="quiz-date">Completed 12/10/2025</span>
-              <button class="btn btn-primary btn-sm btn-reveiw">
+              <button class="btn btn-primary btn-sm btn-review">
                 Review Quiz
               </button>
             </li>
