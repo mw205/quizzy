@@ -66,7 +66,7 @@
                                 <span class="text-sm text-muted">15 Qs . Assigned</span>
 
                             </div>
-                            <button class="btn btn-outline">
+                            <button class="btn btn-outline btn-assign">
                                 Assign
                             </button>
                         </div>
@@ -108,10 +108,28 @@
                         </div>
                 </div>
                 </form>
-
             </div>
-
         </div>
+    </div>
+    <div id="assignModal" class="modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h3>
+                    Assign Exams
+                </h3>
+                <div class="btn-icon" id="closeModalIcon">
+                    &times;
+                </div>
+            </div>
+            <input type="text" placeholder="Search .." id="studentSearch" class="w-full mb-4 p-2 border rounded">
+            <div class="mb-4 border rounded p-2" id="studentList">
+            </div>
+            <div class="flex justify-end gap-2">
+                <button id="modalSave" class="btn btn-outline">Save</button>
+                <button id="modalCancel" class="btn btn-primary">Cancel</button>
+            </div>
+        </div>
+    </div>
     </div>
     <script type="module" src="../scripts/app.js"></script>
 </body>
