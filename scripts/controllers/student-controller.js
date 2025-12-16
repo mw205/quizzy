@@ -85,7 +85,9 @@ export default class StudentController {
 
     // Render Pending
     const pendingEl = document.getElementById("pendingList");
+
     if (pendingEl) {
+      pendingEl.innerHTML = "";
       if (pendingAssignments.length) {
         pendingEl.innerHTML = pendingAssignments
           .map((a) => {

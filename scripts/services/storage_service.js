@@ -19,6 +19,21 @@ export default class StorageService {
         JSON.stringify(initialData.assignments)
       );
       localStorage.setItem("app_initialized", "true");
+    } else {
+      try {
+        const storedAssignments =
+          JSON.parse(localStorage.getItem("assignments")) || [];
+        const storedIds = new Set(storedAssignments.map((a) => a.id));
+        const toAdd = initialData.assignments.filter(
+          (a) => !storedIds.has(a.id)
+        );
+        if (toAdd.length) {
+          const merged = storedAssignments.concat(toAdd);
+          localStorage.setItem("assignments", JSON.stringify(merged));
+        }
+      } catch (err) {
+        console.error("Failed to merge assignments:", err);
+      }
     }
   }
   _get(key) {
