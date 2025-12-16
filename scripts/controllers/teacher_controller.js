@@ -1,3 +1,4 @@
+import Assignments from "../models/assignments.js";
 export default class TeacherController {
   constructor(authService, storageService) {
     this.authService = authService;
@@ -33,6 +34,12 @@ export default class TeacherController {
     document
       .getElementById("modalCancel")
       .addEventListener("click", (e) => this.closeAssignModal());
+    document
+      .getElementById("closeModalIcon")
+      .addEventListener("click", (e) => this.closeAssignModal());
+    document.getElementById("modalSave").addEventListener("click", (e) => {
+      this.saveAssignments();
+    });
   }
 
   switchTab(tabId) {
@@ -58,9 +65,7 @@ export default class TeacherController {
     const relevantResults = results.filter((result) =>
       currentTeacherExams.some((exam) => result.examId === exam.id)
     );
-    const students = this.storageService
-      .getUsers()
-      .filter((user) => user.role === "student");
+    const students = this.storageService.getStudents();
     document.getElementById("resultsBody").innerHTML = relevantResults.map(
       (result) => {
         const student = students.find(
@@ -93,19 +98,16 @@ export default class TeacherController {
         const assignments = this.storageService
           .getAssignments()
           .filter((assignment) => assignment.examId === exam.id);
+        console.log(assignments);
         return `
               <div class="card flex justify-between items-center mb-2">
                             <div>
                                 <strong>${exam.title}</strong>
                                 <br>
-                                <span class="text-sm text-muted">${
-                                  exam.questions.length
-                                } Qs .${assignments.length} Assigned</span>
+                                <span class="text-sm text-muted">${exam.questions.length} Qs .${assignments.length} Assigned</span>
 
                             </div>
-                            <button class="btn btn-outline btn-assign" data-id="${
-                              exam.id
-                            }">
+                            <button class="btn btn-outline btn-assign" data-id="${exam.id}">
                                 Assign
                             </button>
                         </div>
@@ -124,12 +126,9 @@ export default class TeacherController {
     modalEl.classList.remove("active");
   }
   renderAssignModal(query = "") {
-    document.getElementById("closeModalIcon").addEventListener(
-      "click",
-      (e) => {
-        this.closeAssignModal();
-      }
-    );
+    document.getElementById("closeModalIcon").addEventListener("click", (e) => {
+      this.closeAssignModal();
+    });
     const assignments = this.storageService.getAssignments();
     const assignedStudentsIDs = assignments
       .filter((a) => a.examId === this.assignExamId)
@@ -152,5 +151,26 @@ export default class TeacherController {
         `;
       })
       .join("");
-    }
+  }
+  saveAssignments() {
+    const checks = document.querySelectorAll(
+      ".assign-check:checked:not(:disabled)"
+    );
+    const studentIds = Array.from(checks).map((check) => check.value);
+    const assignements = this.storageService.getAssignments();
+    studentIds.map((sid) => {
+      const newAssignement = new Assignments({
+        id: `assignment_${assignements.length + 1}`,
+        creatorId: this.currentUser.id,
+        examId: this.assignExamId,
+        status: "pendeing",
+        studentId: sid,
+        date: new Date().toISOString(),
+      });
+      this.storageService.addAssignment(newAssignement);
+    });
+    alert("new assignement added!");
+    this.closeAssignModal();
+    this.renderExamsList();
+  }
 }

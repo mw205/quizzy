@@ -331,3 +331,14 @@ nav {
   max-height: 80vh;
   overflow-y: auto;
 }
+.rounded-full {
+  border-radius: 9999px;
+}
+
+.h-8 {
+  height: 2rem;
+}
+
+.w-8 {
+  width: 2rem;
+}

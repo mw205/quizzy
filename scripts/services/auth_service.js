@@ -63,7 +63,7 @@ export default class AuthService {
       if (role === "teacher") {
         window.location.href = "../views/teacher-login.html";
       } else {
-        window.location.href = "../views/student-login.html";
+        window.location.href = "../../views/student-dashboard.html";
       }
       return null;
     }

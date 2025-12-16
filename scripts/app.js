@@ -1,5 +1,5 @@
-import TeacherController from "./controllers/teacher_controller.js";
 import StudentController from "./controllers/student-controller.js";
+import TeacherController from "./controllers/teacher_controller.js";
 import AuthService from "./services/auth_service.js";
 import StorageService from "./services/storage_service.js";
 import { ImageUtils } from "./utils/ImageUtils.js";
@@ -109,16 +109,7 @@ export const handleLogout = () => {
 document.addEventListener("DOMContentLoaded", () => {
   handleAuthForms(authService);
   handleLogout();
-
-  // Teacher Dashboard specific logic
-  if (window.location.pathname.includes("teacher-dashboard.html")) {
-    if (!currentUser || currentUser.role !== "teacher") {
-      window.location.href = "../index.html"; // Redirect to login if not a teacher
-    } else {
-      new TeacherController(authService, storageService);
-    }
-  }
-
+  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
   const path = window.location.pathname;
   if (path.includes("teacher-dashboard")) {
     new TeacherController(authService, storageService);
