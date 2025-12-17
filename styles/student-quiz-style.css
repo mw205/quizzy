@@ -199,3 +199,12 @@ input[type="radio"]:checked {
   background-color: #f8d7da !important;
 }
 
+/* New classes for immediate feedback */
+.answer-row.correct {
+  border: 2px solid var(--success) !important;
+  background-color: rgba(34, 197, 94, 0.08) !important; /* subtle green */
+}
+.answer-row.incorrect {
+  border: 2px solid var(--danger) !important;
+  background-color: rgba(239, 68, 68, 0.08) !important; /* subtle red */
+}
