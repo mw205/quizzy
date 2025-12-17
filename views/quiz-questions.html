@@ -21,36 +21,36 @@
       <section
         class="card flex flex-col mt-4 quiz-question-container items-center"
       >
-        <div class="quiz-img flex flex-col items-center">
-          <img src="../assets/img-placeholder.jpg" alt="Quiz Image" />
+        <div
+          class="quiz-img flex flex-col items-center"
+          id="questionImageContainer"
+        >
+          <img
+            src="../assets/img-placeholder.jpg"
+            id="questionImage"
+            alt="Quiz Image"
+          />
         </div>
         <div class="current-question-details-row flex w-full">
-          <p class="question-number">
-            Question <span class="current-question-count">1</span> of
-            <span class="quiz-question-count">15</span>
-          </p>
+          <p class="question-number" id="qIndex">question</p>
           <p class="quiz-timer">
-            Time Left: <span class="quiz-duration">14:30</span>
+            Time Left:
+            <span id="timerDisplay" class="quiz-duration timerDisplay"
+              >14:30</span
+            >
           </p>
         </div>
-        <div class="quiz-question flex flex-col items-center">
-          <p class="mb-4 question-title">
-            Which dog breed is known for being very good at herding sheep?
-          </p>
-          <div class="answer-row">
-            <input type="radio" name="answer" id="a1" /> Border Collie
-          </div>
-          <div class="answer-row wrong-answer">
-            <input type="radio" name="answer" id="a2" /> Golden Retriever
-          </div>
-          <div class="answer-row true-answer">
-            <input type="radio" name="answer" id="a3" /> Beagle
-          </div>
-          <div class="answer-row">
-            <input type="radio" name="answer" id="a4" /> Pug
-          </div>
+        <p class="mb-4 question-title" id="qText">
+          Question Text Here
+        </p>
+        <div
+          class="quiz-question flex flex-col items-center"
+          id="choicesContainer"
+        >
         </div>
-        <button class="btn btn-primary quiz-btn mb-4" disabled>Next</button>
+        <button class="btn btn-primary quiz-btn mb-4" id="nextBtn" disabled>
+          Next
+        </button>
       </section>
     </main>
     <script type="module" src="../scripts/app.js"></script>

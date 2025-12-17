@@ -75,3 +75,19 @@ main {
   font-size: 2rem;
   width: 110%;
 }
+
+#reviewContainer{
+  width: 40%;
+
+  min-width: fit-content;
+  padding: 2rem;
+  font-size: 1.2rem;
+}
+
+.result-question-image {
+  /* object-cover rounded */
+  width: 40%;
+  margin-top: 0.5rem;
+  object-fit: cover;
+  border-radius: 0.5rem;
+}

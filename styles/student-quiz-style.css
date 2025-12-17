@@ -138,6 +138,12 @@ input[type="radio"]:checked {
   border-radius: 10px;
 }
 
+/* subtle styling for fallback images */
+.fallback-image {
+  filter: grayscale(30%);
+  opacity: 0.95;
+}
+
 .question-title {
   font-weight: bold;
   margin-bottom: 1rem;
@@ -165,6 +171,11 @@ input[type="radio"]:checked {
   display: flex;
   align-items: center;
 }
+.answer-row label {
+  flex: 1;
+  display: block;
+  padding-left: 1rem;
+}
 .answer-row:hover {
   transform: scale(1.02);
 }
@@ -187,3 +198,4 @@ input[type="radio"]:checked {
   border: 2px solid var(--danger) !important;
   background-color: #f8d7da !important;
 }
+

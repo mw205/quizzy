@@ -22,23 +22,24 @@
         <h2>Congratulations!</h2>
         <p class="mt-2">
           You have completed the quiz:
-          <strong class="quiz-title">Animal Kingdom Quiz</strong>
+          <strong class="quiz-title" id="resExamName">Quiz Title</strong>
         </p>
       </section>
-      <section class="card flex result-section flex-col items-center">
+      <section class="card flex result-section flex-col items-center" >
         <h2>Your Quiz Results</h2>
-        <div class="quiz-result-details flex flex-col gap-4 mt-4">
+        <div class="quiz-result-details flex flex-col gap-4 mt-4" >
           <p>
-            Total Questions: <strong class="quiz-question-count">15</strong>
+            Total Questions: <strong class="quiz-question-count" id="resTotalQuestions">15</strong>
           </p>
           <p>Correct Answers: <strong class="correct-count">8</strong></p>
           <p>Wrong Answers: <strong class="wrong-count">7</strong></p>
           <p class="score-row">
-            Your Score: <strong class="quiz-score">80%</strong>
+            Your Score: <strong class="quiz-score" id="resScore">80%</strong>
           </p>
         </div>
-        <button class="btn btn-primary mt-4 back">Back to Dashboard</button>
+        <button class="btn btn-primary mt-4 back" id="backBtn">Back to Dashboard</button>
       </section>
+      <section id="reviewContainer"></section>
     </main>
     <script type="module" src="../scripts/app.js"></script>
   </body>
