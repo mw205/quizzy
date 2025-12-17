@@ -1,4 +1,5 @@
 import StudentController from "./controllers/student-controller.js";
+import ExamController from "./controllers/quiz-controller.js";
 import TeacherController from "./controllers/teacher_controller.js";
 import AuthService from "./services/auth_service.js";
 import StorageService from "./services/storage_service.js";
@@ -121,5 +122,87 @@ document.addEventListener("DOMContentLoaded", () => {
     new ExamController(authService, storageService, "results");
   } else if (path.includes("quiz-instructions.html")) {
     if (!authService.requireAuth("student")) return;
+
+    // If an examId is present in the URL, store it as the active exam so
+    // navigation to the questions page always has a reference.
+    const params = new URLSearchParams(window.location.search);
+    const examIdFromUrl = params.get("examId");
+    if (examIdFromUrl) localStorage.setItem("activeExamId", examIdFromUrl);
+
+    // Resolve active exam (from localStorage) and populate the instructions page
+    const activeExamId = localStorage.getItem("activeExamId");
+    const exam = activeExamId
+      ? storageService.getExams().find((e) => e.id === activeExamId)
+      : null;
+
+    const startBtn = document.querySelector(".quiz-btn");
+
+    if (exam) {
+      // Populate UI
+      const titleEl = document.querySelector(".quiz-title");
+      const descEl = document.querySelector(".quiz-description");
+      const qCountEl = document.querySelector(".quiz-question-count");
+      const durEl = document.querySelector(".quiz-duration");
+      if (titleEl) titleEl.innerText = exam.title;
+      if (descEl) descEl.innerText = exam.description || "";
+      if (qCountEl) qCountEl.innerText = `${exam.questions.length} questions`;
+      if (durEl) durEl.innerText = `${exam.durationMinutes} minutes`;
+
+      // If student already has a result for this exam, disable retake and show review option
+      const existingResult = storageService
+        .getResults()
+        .find(
+          (r) =>
+            r.examId === exam.id &&
+            r.studentId === (currentUser && currentUser.id)
+        );
+
+      if (existingResult) {
+        const note = document.createElement("p");
+        note.style.color = "#2c3e50";
+        note.style.fontWeight = "600";
+        note.style.marginTop = "8px";
+        note.innerText = `You have already completed this exam (${new Date(
+          existingResult.date
+        ).toLocaleDateString()}). You cannot retake it.`;
+        const container = document.querySelector(".quiz-instructions");
+        if (container) container.appendChild(note);
+
+        if (startBtn) {
+          startBtn.disabled = true;
+          startBtn.innerText = "Completed — Review Result";
+          startBtn.addEventListener("click", () => {
+            localStorage.setItem("activeResultId", existingResult.id);
+            window.location.href = "student-result.html";
+          });
+        }
+      } else {
+        if (startBtn) {
+          startBtn.disabled = false;
+          startBtn.addEventListener("click", () => {
+            // Ensure activeExamId is set
+            localStorage.setItem("activeExamId", activeExamId);
+            window.location.href = "quiz-questions.html";
+          });
+        }
+      }
+    } else {
+      // No matching exam found — disable start action and show guidance
+      if (startBtn) {
+        startBtn.addEventListener("click", () => {
+          alert(
+            "No active exam selected. Please start the quiz from your dashboard."
+          );
+        });
+      }
+      // Show a subtle inline message if possible
+      const info = document.createElement("p");
+      info.style.color = "#c0392b";
+      info.style.marginTop = "8px";
+      info.innerText =
+        "No exam found. Start the quiz from your dashboard to proceed.";
+      const container = document.querySelector(".quiz-instructions");
+      if (container) container.appendChild(info);
+    }
   }
 });

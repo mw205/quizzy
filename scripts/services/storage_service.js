@@ -9,6 +9,24 @@ export default class StorageService {
     this.init();
   }
 
+  // Remove duplicate results keeping the latest by date
+  _dedupeResults(results) {
+    const map = new Map();
+    results.forEach((r) => {
+      const key = `${r.studentId}_${r.examId}`;
+      if (!map.has(key)) map.set(key, r);
+      else {
+        const existing = map.get(key);
+        const existingDate = existing.date
+          ? new Date(existing.date).getTime()
+          : 0;
+        const curDate = r.date ? new Date(r.date).getTime() : 0;
+        if (curDate > existingDate) map.set(key, r);
+      }
+    });
+    return Array.from(map.values());
+  }
+
   init() {
     if (!localStorage.getItem("app_initialized")) {
       localStorage.setItem("users", JSON.stringify(initialData.users));
@@ -30,6 +48,18 @@ export default class StorageService {
         if (toAdd.length) {
           const merged = storedAssignments.concat(toAdd);
           localStorage.setItem("assignments", JSON.stringify(merged));
+        }
+
+        // Clean up duplicate results if any exist in persisted data
+        try {
+          const storedResults =
+            JSON.parse(localStorage.getItem("results")) || [];
+          const deduped = this._dedupeResults(storedResults);
+          if (deduped.length !== storedResults.length) {
+            localStorage.setItem("results", JSON.stringify(deduped));
+          }
+        } catch (err) {
+          console.error("Failed to dedupe results:", err);
         }
       } catch (err) {
         console.error("Failed to merge assignments:", err);
@@ -56,7 +86,9 @@ export default class StorageService {
   }
 
   getResults() {
-    return this._get("results").map((r) => new Result(r));
+    const raw = this._get("results");
+    const unique = this._dedupeResults(raw);
+    return unique.map((r) => new Result(r));
   }
 
   getAssignments() {
@@ -98,6 +130,13 @@ export default class StorageService {
   // Result
   addResult(result) {
     const results = this._get("results");
+    // If there's an existing result for the same student & exam, replace it
+    const existingIndex = results.findIndex(
+      (r) => r.examId === result.examId && r.studentId === result.studentId
+    );
+    if (existingIndex >= 0) {
+      results.splice(existingIndex, 1);
+    }
     results.push(result);
     this._save("results", results);
 
