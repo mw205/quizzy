@@ -51,7 +51,8 @@ export default class AuthService {
       profilePic: data.profilePic,
     });
     this.storageService.addUser(student);
-    return true;
+    localStorage.setItem("currentUser", JSON.stringify(student));
+    return student;
   }
   getCurrentUser() {
     return JSON.parse(localStorage.getItem("currentUser"));
