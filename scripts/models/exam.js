@@ -1,4 +1,4 @@
-class Exam {
+export default class Exam {
   constructor(data) {
     this.id = data.id;
     this.creatorId = data.creatorId;
@@ -23,7 +23,7 @@ class Question {
     this.image = data.image || null;
     this.options = data.options || [];
     this.correctAnswer = data.correctAnswer;
-    this.difficulty = data.difficulty || "easy";
+    this.difficulty = data.difficulty || "Easy";
     this.score = data.score || 1;
   }
 }

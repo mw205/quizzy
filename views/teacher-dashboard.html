@@ -46,6 +46,7 @@
                                     <th>EXAM</th>
                                     <th>SCORE</th>
                                     <th>DATE</th>
+                                    <th>ACTIONS</th>
                                 </tr>
                             </thead>
                             <tbody id="resultsBody"></tbody>
@@ -73,14 +74,17 @@
                     </div>
                 </div>
                 <div class="tab-content" id="createExamTab">
-                    <h3>Create New Exam</h3>
+                    <div class="flex justify-between items-center mb-4">
+                        <h3>Create New Exam</h3>
+                        <button id="autoFillBtn" class="btn btn-outline btn-sm">Auto Fill ✨</button>
+                    </div>
                     <form class="card" action="" id="create-exam-form">
                         <div class="grid-2">
                             <div class="input-group">
                                 <label for="exam-name">
                                     Exam Name
                                 </label>
-                                <input type="text" name="exam-name" placeholder="e.g. Planets">
+                                <input type="text" name="exam-name" placeholder="e.g. Planets" id="examName">
                             </div>
                             <div class="input-group">
                                 <label for="exam-duration">
@@ -93,16 +97,16 @@
                         <div class="sticky-top flex justify-between items-center">
                             <h3>Questions</h3>
                             <div>
-                                <span class="text-muted">0/15 Qs</span>
-                                <span class="text-danger">0/100 Pts</span>
+                                <span class="text-muted" id="questionsCount">0/15 Qs</span>
+                                <span class="text-danger" id="questionsTotalScore">0/100 Pts</span>
                             </div>
                         </div>
                         <div id="questionsContainer"></div>
                         <div class="grid-2">
-                            <button class="btn btn-outline" type="button">
+                            <button class="btn btn-outline" type="button" id="addQuestionBtn">
                                 + Add Questions
                             </button>
-                            <button class="btn btn-primary" type="submit">
+                            <button class="btn btn-primary" type="submit" id="saveExamBtn">
                                 💾 Save Exam
                             </button>
                         </div>
