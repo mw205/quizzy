@@ -182,6 +182,8 @@ document.addEventListener("DOMContentLoaded", () => {
           startBtn.addEventListener("click", () => {
             // Ensure activeExamId is set
             localStorage.setItem("activeExamId", activeExamId);
+            // set a new shuffle seed so each attempt randomizes differently
+            localStorage.setItem("activeExamShuffle", Date.now().toString());
             window.location.href = "quiz-questions.html";
           });
         }

@@ -13,6 +13,48 @@ export default class ExamController {
     if (this.mode === "player") this.initPlayer();
     if (this.mode === "results") this.initResults();
   }
+
+  // Fisher–Yates shuffle helper used to randomize questions and answers
+  _shuffleArray(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  // Seeded shuffle using a simple PRNG (Mulberry32) so we can vary the shuffle each attempt
+  _mulberry32(a) {
+    return function () {
+      a |= 0;
+      a = (a + 0x6d2b79f5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  _shuffleWithSeed(arr, seed) {
+    const s =
+      typeof seed === "string"
+        ? this._hashStringToInt(seed)
+        : +seed || Date.now();
+    const rand = this._mulberry32(s);
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(rand() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  _hashStringToInt(str) {
+    let h = 2166136261 >>> 0;
+    for (let i = 0; i < str.length; i++) {
+      h ^= str.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    return h >>> 0;
+  }
   initPlayer() {
     const examId = localStorage.getItem("activeExamId");
     this.exam = this.storage.getExams().find((e) => e.id === examId);
@@ -27,9 +69,28 @@ export default class ExamController {
       return (window.location.href = "student-result.html");
     }
 
+    // Create a randomized copy of questions and per-question randomized options
+    const seed =
+      localStorage.getItem("activeExamShuffle") || Date.now().toString();
+    this.shuffledQuestions = this.exam.questions.map((q) => ({
+      ...q,
+      options: this._shuffleWithSeed([...q.options], seed + "|" + q.id),
+    }));
+    this._shuffleWithSeed(this.shuffledQuestions, seed + "|questions");
+
     this.currentQ = 0;
     this.answers = {};
     this.timeLeft = this.exam.durationMinutes * 60;
+    this.locked = false; // prevents changing answer after selecting
+
+    // Prevent navigating back during the quiz (no retakes)
+    this._popHandler = () => {
+      // When user hits back, immediately go forward
+      history.go(1);
+    };
+    // Push a history entry and attach handler
+    history.pushState(null, "", location.href);
+    window.addEventListener("popstate", this._popHandler);
 
     this.renderQuestion();
     this.startTimer();
@@ -37,9 +98,11 @@ export default class ExamController {
     document
       .getElementById("nextBtn")
       .addEventListener("click", () => this.nextQuestion());
+
     document
       .getElementById("choicesContainer")
       .addEventListener("click", (e) => {
+        if (this.locked) return; // don't allow further selections after answer
         const target = e.target;
         // If user clicked the row, find the input inside
         if (target.classList.contains("answer-row")) {
@@ -59,11 +122,11 @@ export default class ExamController {
   }
 
   renderQuestion() {
-    const q = this.exam.questions[this.currentQ];
+    const q = this.shuffledQuestions[this.currentQ];
     try {
       document.getElementById("qIndex").innerText = `Question ${
         this.currentQ + 1
-      } / ${this.exam.questions.length}`;
+      } / ${this.shuffledQuestions.length}`;
       console.log("ExamController.renderQuestion:", this.currentQ, q);
 
       const imgContainer = document.getElementById("questionImageContainer");
@@ -98,7 +161,15 @@ export default class ExamController {
           `
         )
         .join("");
-
+      // Reset selection/visual state and re-enable inputs
+      document.querySelectorAll(".answer-row").forEach((r) => {
+        r.classList.remove("correct", "incorrect");
+      });
+      document.querySelectorAll(".choice-btn").forEach((i) => {
+        i.checked = false;
+        i.disabled = false;
+      });
+      this.locked = false;
       // Update question text after replacing innerHTML so the qText element exists
       const qTextEl = document.getElementById("qText");
       if (qTextEl) qTextEl.innerText = q.text;
@@ -110,19 +181,35 @@ export default class ExamController {
   }
 
   selectAnswer(value, btn) {
-    const qId = this.exam.questions[this.currentQ].id;
+    const qId = this.shuffledQuestions[this.currentQ].id;
     this.answers[qId] = value;
 
-    // clear previous selection styles
-    document.querySelectorAll(".answer-row").forEach((r) => {
-      r.style.background = "transparent";
-      r.style.borderColor = "var(--border-color)";
+    // lock selection for this question
+    this.locked = true;
+
+    // disable inputs so user cannot change mind
+    document
+      .querySelectorAll(".choice-btn")
+      .forEach((i) => (i.disabled = true));
+
+    // Mark correct and incorrect rows using classes
+    const rows = document.querySelectorAll(".answer-row");
+    rows.forEach((r) => {
+      const val = r.dataset.value;
+      r.classList.remove("correct", "incorrect");
+      if (val === this.shuffledQuestions[this.currentQ].correctAnswer) {
+        r.classList.add("correct");
+      }
+      if (
+        val === value &&
+        val !== this.shuffledQuestions[this.currentQ].correctAnswer
+      ) {
+        r.classList.add("incorrect");
+      }
     });
 
+    // ensure the selected radio is checked
     if (btn) {
-      btn.style.background = "rgba(37,99,235,0.05)";
-      btn.style.borderColor = "var(--primary)";
-      // ensure the radio inside is checked
       const input = btn.querySelector(".choice-btn");
       if (input) input.checked = true;
     }
@@ -133,6 +220,8 @@ export default class ExamController {
   nextQuestion() {
     if (this.currentQ < this.exam.questions.length - 1) {
       this.currentQ++;
+      // push a history entry so back navigation is prevented by popstate handler
+      history.pushState(null, "", location.href);
       this.renderQuestion();
     } else {
       this.finishExam();
@@ -141,6 +230,10 @@ export default class ExamController {
 
   finishExam() {
     clearInterval(this.interval);
+    // remove back-navigation handler when quiz ends
+    if (this._popHandler)
+      window.removeEventListener("popstate", this._popHandler);
+
     let score = 0;
     this.exam.questions.forEach((q) => {
       if (this.answers[q.id] === q.correctAnswer) score += q.score;
