@@ -35,7 +35,10 @@ export default class ExamController {
   }
 
   _shuffleWithSeed(arr, seed) {
-    const s = typeof seed === 'string' ? this._hashStringToInt(seed) : +seed || Date.now();
+    const s =
+      typeof seed === "string"
+        ? this._hashStringToInt(seed)
+        : +seed || Date.now();
     const rand = this._mulberry32(s);
     for (let i = arr.length - 1; i > 0; i--) {
       const j = Math.floor(rand() * (i + 1));
@@ -67,12 +70,13 @@ export default class ExamController {
     }
 
     // Create a randomized copy of questions and per-question randomized options
-    const seed = localStorage.getItem('activeExamShuffle') || Date.now().toString();
+    const seed =
+      localStorage.getItem("activeExamShuffle") || Date.now().toString();
     this.shuffledQuestions = this.exam.questions.map((q) => ({
       ...q,
-      options: this._shuffleWithSeed([...q.options], seed + '|' + q.id),
+      options: this._shuffleWithSeed([...q.options], seed + "|" + q.id),
     }));
-    this._shuffleWithSeed(this.shuffledQuestions, seed + '|questions');
+    this._shuffleWithSeed(this.shuffledQuestions, seed + "|questions");
 
     this.currentQ = 0;
     this.answers = {};
@@ -227,7 +231,8 @@ export default class ExamController {
   finishExam() {
     clearInterval(this.interval);
     // remove back-navigation handler when quiz ends
-    if (this._popHandler) window.removeEventListener("popstate", this._popHandler);
+    if (this._popHandler)
+      window.removeEventListener("popstate", this._popHandler);
 
     let score = 0;
     this.exam.questions.forEach((q) => {
