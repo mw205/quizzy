@@ -67,9 +67,14 @@ export const initialData = {
       id: "result_1",
       studentId: "student_1",
       examId: "exam_1",
-      score: 25,
+      score: 20,
       totalScore: 30,
       date: "2025-12-13T10:00:00Z",
+      answers: {
+        q_1_1: "Shih Tzu",
+        q_1_2: "Pug",
+        q_1_3: "10-12 years",
+      },
     },
   ],
   assignments: [

@@ -246,6 +246,7 @@ export default class ExamController {
       score: score,
       totalScore: this.exam.totalScore,
       answers: this.answers,
+      questions: this.shuffledQuestions,
     });
 
     this.storage.addResult(result);
