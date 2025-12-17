@@ -1,9 +1,9 @@
-import StudentController from "./controllers/student-controller.js";
 import ExamController from "./controllers/quiz-controller.js";
+import StudentController from "./controllers/student-controller.js";
 import TeacherController from "./controllers/teacher_controller.js";
 import AuthService from "./services/auth_service.js";
+import { ImagesService } from "./services/images_service.js";
 import StorageService from "./services/storage_service.js";
-import { ImageUtils } from "./utils/ImageUtils.js";
 const storageService = new StorageService();
 const authService = new AuthService(storageService);
 
@@ -42,16 +42,10 @@ export const handleAuthForms = (auth) => {
     const profilePreview = document.getElementById("profilePreview");
 
     if (profileInput && profilePreview) {
-      profileInput.addEventListener("change", async (e) => {
+      profileInput.addEventListener("change", (e) => {
         const file = e.target.files[0];
         if (file) {
-          try {
-            // Compress before previewing
-            const base64 = await ImageUtils.compress(file, 200, 0.8);
-            if (profilePreview) profilePreview.src = base64;
-          } catch (err) {
-            console.error("Image processing failed", err);
-          }
+          if (profilePreview) profilePreview.src = URL.createObjectURL(file);
         }
       });
     }
@@ -67,13 +61,19 @@ export const handleAuthForms = (auth) => {
       const profilePicInput = document.getElementById("profilePic");
 
       // Check if user already exists
-      let profilePicBase64 = null;
+      let profilePicUrl =
+        "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png";
       if (profilePicInput && profilePicInput.files[0]) {
-        profilePicBase64 = await ImageUtils.compress(
-          profilePicInput.files[0],
-          200,
-          0.8
-        );
+        document.querySelector(".loader").classList.add("active");
+        try {
+          profilePicUrl = await ImagesService.uploadImage(
+            profilePicInput.files[0]
+          );
+          document.querySelector(".loader").classList.remove("active");
+        } catch (uploadError) {
+          console.error("Failed to upload profile picture:", uploadError);
+          alert("Failed to upload profile picture. Using default.");
+        }
       }
 
       try {
@@ -83,7 +83,7 @@ export const handleAuthForms = (auth) => {
           password,
           grade: parseInt(grade),
           mobile,
-          profilePic: profilePicBase64,
+          profilePic: profilePicUrl,
         });
         alert("Registration successful!");
         form.reset();

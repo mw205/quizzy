@@ -1,6 +1,6 @@
 import Assignments from "../models/assignments.js";
 import Exam from "../models/exam.js";
-import { ImageUtils } from "../utils/ImageUtils.js";
+import { ImagesService } from "../services/images_service.js";
 export default class TeacherController {
   constructor(authService, storageService) {
     this.authService = authService;
@@ -219,6 +219,7 @@ export default class TeacherController {
                         ? `<img src="${q.image}" class="h-20 mb-2 object-cover items-center">`
                         : ""
                     }
+                    <span class="loader"></span>
                     <label for="imageUpload${
                       q.id
                     }" class ="mb-4 btn btn-outline btn-sm cursor-pointer text-center w-full">Upload Image (optional)</label>
@@ -356,12 +357,14 @@ export default class TeacherController {
 
   handleQuestionChange(e) {
     const index = parseInt(e.target.dataset.index);
-
+    const currentLoader = document.querySelectorAll(".loader").item(index);
     if (e.target.type === "file") {
+      currentLoader.classList.add("active");
       const file = e.target.files[0];
       if (file) {
-        ImageUtils.compress(file).then((base64) => {
-          this.newQuestions[index].image = base64;
+        ImagesService.uploadImage(file).then((imageUrl) => {
+          this.newQuestions[index].image = imageUrl;
+          currentLoader.classList.remove("active");
           this.renderExamEditor();
         });
       }
