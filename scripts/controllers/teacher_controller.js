@@ -63,21 +63,42 @@ export default class TeacherController {
     document
       .getElementById("create-exam-form")
       .addEventListener("submit", (e) => this.handleCreateExam(e));
+    document
+      .querySelector(".scrollable-area")
+      .addEventListener("click", (e) => {
+        if (e.target.classList.contains("btn-view-result")) {
+          this.openResultView(e.target.dataset.id);
+        }
+      });
+    document
+      .getElementById("backToResultsBtn")
+      ?.addEventListener("click", () => this.closeResultView());
   }
 
   switchTab(tabId) {
-    if (!tabId) return;
     document
-      .querySelectorAll(".nav-btn")
-      .forEach((element) => element.classList.remove("active"));
-    document.querySelectorAll(".tab-content").forEach((element) => {
-      element.classList.add("hidden");
-    });
-    // acitvate current tab and the current button
+      .querySelectorAll(".tab-content")
+      .forEach((c) => c.classList.add("hidden"));
+    if (["results-tab", "exams-tab", "create-tab"].includes(tabId)) {
+      document
+        .querySelectorAll(".tab-btn")
+        .forEach((b) => b.classList.remove("active"));
+      document
+        .querySelectorAll(`[data-tab="${tabId}"]`)
+        .forEach((b) => b.classList.add("active"));
+    } else {
+      if (tabId === "result-details-tab") {
+        document
+          .querySelectorAll(".tab-btn")
+          .forEach((b) => b.classList.remove("active"));
+
+        document
+          .querySelectorAll(`[data-tab="results-tab"]`)
+          .forEach((b) => b.classList.add("active"));
+      }
+    }
+
     document.getElementById(tabId).classList.remove("hidden");
-    document.querySelectorAll(`[data-tab=${tabId}]`).forEach((element) => {
-      element.classList.add("active");
-    });
   }
   renderResultsTable() {
     const exams = this.storageService.getExams();
@@ -89,8 +110,8 @@ export default class TeacherController {
       currentTeacherExams.some((exam) => result.examId === exam.id)
     );
     const students = this.storageService.getStudents();
-    document.getElementById("resultsBody").innerHTML = relevantResults.map(
-      (result) => {
+    document.getElementById("resultsBody").innerHTML = relevantResults
+      .map((result) => {
         const student = students.find(
           (student) => student.id === result.studentId
         );
@@ -106,12 +127,12 @@ export default class TeacherController {
             : "text-danger"
         }">${result.score}/${result.totalScore}</td>
         <td>${new Date(result.date).toLocaleDateString()}</td>
-        <td>
-        <button class="btn btn-outline btn-view-result">View</button>
-        </td>
+                <td><button class="btn btn-sm btn-outline btn-view-result" data-id="${
+                  result.id
+                }">View</button>
         </tr>`;
-      }
-    );
+      })
+      .join("");
   }
   renderExamsList() {
     const exams = this.storageService.getExams();
@@ -383,5 +404,102 @@ export default class TeacherController {
     } else {
       this.newQuestions[index][field] = value;
     }
+  }
+  openResultView(resultId) {
+    const result = this.storageService
+      .getResults()
+      .find((result) => result.id === resultId);
+    const student = this.storageService
+      .getStudents()
+      .find((student) => student.id === result.studentId);
+    const exam = this.storageService
+      .getExams()
+      .find((exam) => exam.id === result.examId);
+    const questionsToRender =
+      result.questions && result.questions.length > 0
+        ? result.questions
+        : exam
+        ? exam.questions
+        : [];
+    document.getElementById("detailExamTitle").innerText = exam.title;
+    document.getElementById(
+      "detailStudentInfo"
+    ).innerText = `${student.username}•${result.score}/${result.totalScore}Points`;
+    document.getElementById("resultDetailsContent").innerHTML =
+      questionsToRender
+        .map((question, idx) => {
+          const userAns = result.answers[question.id];
+          const isCorrect = userAns === question.correctAnswer;
+          return `
+              <div class="card p-4 ${
+                isCorrect
+                  ? "border-l-4 border-green-500"
+                  : "border-l-4 border-red-500"
+              }">
+                  <div class="flex justify-between items-start mb-2">
+                      <div class="font-bold text-lg">Q${idx + 1}: ${
+            question.text
+          }</div>
+                      <span class="badge ${
+                        isCorrect
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                      }">
+                          ${
+                            isCorrect
+                              ? "Correct (+" + question.score + ")"
+                              : "Incorrect (0/" + question.score + ")"
+                          }
+                      </span>
+                  </div>
+                  ${
+                    question.image
+                      ? `<img src="${question.image}" class="h-32 mb-4 rounded object-cover">`
+                      : ""
+                  }
+                  <div class="flex flex-col gap-2 mt-3 text-sm">
+                      ${question.options
+                        .map((opt) => {
+                          const isSelected = userAns === opt;
+                          const isCorrectOpt = opt === question.correctAnswer;
+                          let bgClass = "bg-gray-50 border border-gray-200";
+                          let textClass = "text-gray-700";
+                          if (isCorrectOpt) {
+                            bgClass = "bg-green-100 border border-green-300";
+                            textClass = "text-green-800 font-semibold";
+                          } else if (isSelected) {
+                            bgClass = "bg-red-100 border border-red-300";
+                            textClass = "text-red-800 font-semibold";
+                          }
+                          return `
+                              <div class="p-3 rounded ${bgClass} ${textClass} flex justify-between items-center">
+                                  <span>${opt}</span>
+                                  <span>
+                                      ${
+                                        isSelected
+                                          ? '<span class="text-xs uppercase mr-2 font-bold">(Student)</span>'
+                                          : ""
+                                      }
+                                      ${
+                                        isCorrectOpt
+                                          ? "✅"
+                                          : isSelected
+                                          ? "❌"
+                                          : ""
+                                      }
+                                  </span>
+                              </div>
+                          `;
+                        })
+                        .join("")}
+                  </div>
+              </div>
+          `;
+        })
+        .join("");
+    this.switchTab("result-details-tab");
+  }
+  closeResultView() {
+    this.switchTab("resultsTab");
   }
 }
