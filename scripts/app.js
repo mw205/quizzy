@@ -107,6 +107,11 @@ export const handleLogout = () => {
   }
 };
 
+const selectedMode = localStorage.getItem("selectedMode");
+if (selectedMode) {
+  document.body.classList.toggle("dark", selectedMode === "dark");
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   handleAuthForms(authService);
   handleLogout();
@@ -123,13 +128,10 @@ document.addEventListener("DOMContentLoaded", () => {
   } else if (path.includes("quiz-instructions.html")) {
     if (!authService.requireAuth("student")) return;
 
-    // If an examId is present in the URL, store it as the active exam so
-    // navigation to the questions page always has a reference.
     const params = new URLSearchParams(window.location.search);
     const examIdFromUrl = params.get("examId");
     if (examIdFromUrl) localStorage.setItem("activeExamId", examIdFromUrl);
 
-    // Resolve active exam (from localStorage) and populate the instructions page
     const activeExamId = localStorage.getItem("activeExamId");
     const exam = activeExamId
       ? storageService.getExams().find((e) => e.id === activeExamId)
@@ -138,7 +140,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const startBtn = document.querySelector(".quiz-btn");
 
     if (exam) {
-      // Populate UI
       const titleEl = document.querySelector(".quiz-title");
       const descEl = document.querySelector(".quiz-description");
       const qCountEl = document.querySelector(".quiz-question-count");
@@ -148,7 +149,6 @@ document.addEventListener("DOMContentLoaded", () => {
       if (qCountEl) qCountEl.innerText = `${exam.questions.length} questions`;
       if (durEl) durEl.innerText = `${exam.durationMinutes} minutes`;
 
-      // If student already has a result for this exam, disable retake and show review option
       const existingResult = storageService
         .getResults()
         .find(
@@ -180,16 +180,13 @@ document.addEventListener("DOMContentLoaded", () => {
         if (startBtn) {
           startBtn.disabled = false;
           startBtn.addEventListener("click", () => {
-            // Ensure activeExamId is set
             localStorage.setItem("activeExamId", activeExamId);
-            // set a new shuffle seed so each attempt randomizes differently
             localStorage.setItem("activeExamShuffle", Date.now().toString());
             window.location.href = "quiz-questions.html";
           });
         }
       }
     } else {
-      // No matching exam found — disable start action and show guidance
       if (startBtn) {
         startBtn.addEventListener("click", () => {
           alert(
@@ -197,7 +194,6 @@ document.addEventListener("DOMContentLoaded", () => {
           );
         });
       }
-      // Show a subtle inline message if possible
       const info = document.createElement("p");
       info.style.color = "#c0392b";
       info.style.marginTop = "8px";
@@ -206,5 +202,17 @@ document.addEventListener("DOMContentLoaded", () => {
       const container = document.querySelector(".quiz-instructions");
       if (container) container.appendChild(info);
     }
+  }
+
+  const mode = document.getElementById("mode");
+
+  if (mode) {
+    mode.addEventListener("click", () => {
+      const selectedMode = document.body.classList.contains("dark")
+        ? "light"
+        : "dark";
+      document.body.classList.toggle("dark");
+      localStorage.setItem("selectedMode", selectedMode);
+    });
   }
 });
