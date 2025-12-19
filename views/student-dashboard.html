@@ -6,10 +6,14 @@
     <title>Quizzy - Dashboard</title>
     <link rel="stylesheet" href="../styles/main.css" />
     <link rel="stylesheet" href="../styles/student-dashboard-style.css" />
+    <link rel="icon" href="/assets/Q.ico?v=1" type="image/x-icon" />
+    <link rel="shortcut icon" href="/assets/Q.ico?v=1" />
   </head>
   <body>
     <nav class="flex w-full">
-      <h1 class="logo"><img src="../assets/logo.png" alt="Quizzy Logo" width="100"></h1>
+      <h1 class="logo">
+        <img src="../assets/logo.png" alt="Quizzy Logo" width="100" />
+      </h1>
       <div class="right flex">
         <button class="btn btn-primary" id="mode">🌙</button>
         <button class="btn btn-primary" id="logout">Logout</button>
@@ -42,10 +46,12 @@
         <h2>Your <br />Progress</h2>
         <div class="flex progress-bar">
           <p class="card mb-2 flex flex-col items-center">
-            <span class="icon">🏆</span>Quizzes Taken: <strong id="statCompleted">5</strong>
+            <span class="icon">🏆</span>Quizzes Taken:
+            <strong id="statCompleted">5</strong>
           </p>
           <p class="card mb-2 flex flex-col items-center">
-            <span class="icon">⭐</span>Average Score: <strong id="statAvg">80%</strong>
+            <span class="icon">⭐</span>Average Score:
+            <strong id="statAvg">80%</strong>
           </p>
         </div>
       </section>

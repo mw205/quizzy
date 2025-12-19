@@ -3,13 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Quizzy - Dashboard</title>
+    <title>Quizzy - Results</title>
     <link rel="stylesheet" href="../styles/main.css" />
     <link rel="stylesheet" href="../styles/quiz-result.css" />
+    <link rel="icon" href="/assets/Q.ico?v=1" type="image/x-icon" />
+    <link rel="shortcut icon" href="/assets/Q.ico?v=1" />
   </head>
   <body>
     <nav class="flex w-full">
-      <h1 class="logo"><img src="../assets/logo.png" alt="Quizzy Logo" width="100"></h1>
+      <h1 class="logo">
+        <img src="../assets/logo.png" alt="Quizzy Logo" width="100" />
+      </h1>
       <div class="right flex">
         <button class="btn btn-primary" id="mode">🌙</button>
         <button class="btn btn-primary" id="logout">Logout</button>
@@ -25,11 +29,14 @@
           <strong class="quiz-title" id="resExamName">Quiz Title</strong>
         </p>
       </section>
-      <section class="card flex result-section flex-col items-center" >
+      <section class="card flex result-section flex-col items-center">
         <h2>Your Quiz Results</h2>
-        <div class="quiz-result-details flex flex-col gap-4 mt-4" >
+        <div class="quiz-result-details flex flex-col gap-4 mt-4">
           <p>
-            Total Questions: <strong class="quiz-question-count" id="resTotalQuestions">15</strong>
+            Total Questions:
+            <strong class="quiz-question-count" id="resTotalQuestions"
+              >15</strong
+            >
           </p>
           <p>Correct Answers: <strong class="correct-count">8</strong></p>
           <p>Wrong Answers: <strong class="wrong-count">7</strong></p>
@@ -37,7 +44,9 @@
             Your Score: <strong class="quiz-score" id="resScore">80%</strong>
           </p>
         </div>
-        <button class="btn btn-primary mt-4 back" id="backBtn">Back to Dashboard</button>
+        <button class="btn btn-primary mt-4 back" id="backBtn">
+          Back to Dashboard
+        </button>
       </section>
       <section id="reviewContainer"></section>
     </main>

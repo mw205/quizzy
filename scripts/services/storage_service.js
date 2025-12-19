@@ -109,6 +109,17 @@ export default class StorageService {
     this._save("exams", exams);
   }
 
+  updateExam(exam) {
+    const exams = this._get("exams");
+    const idx = exams.findIndex((e) => e.id === exam.id);
+    if (idx >= 0) {
+      exams[idx] = exam;
+    } else {
+      exams.push(exam);
+    }
+    this._save("exams", exams);
+  }
+
   // Assignment
   addAssignment(assignment) {
     const assignments = this._get("assignments");
