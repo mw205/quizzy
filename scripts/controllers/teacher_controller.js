@@ -7,6 +7,7 @@ export default class TeacherController {
     this.storageService = storageService;
     this.currentUser = this.authService.requireAuth("teacher");
     this.assignExamId = null;
+    this.editExamId = null;
     this.newQuestions = [];
     this.init();
   }
@@ -29,6 +30,9 @@ export default class TeacherController {
     document.querySelector("#examsTab").addEventListener("click", (e) => {
       if (e.target.classList.contains("btn-assign")) {
         this.showAssignModal(e.target.dataset.id);
+      }
+      if (e.target.classList.contains("btn-edit")) {
+        this.showEditExam(e.target.dataset.id);
       }
     });
     document.getElementById("studentSearch").addEventListener("keyup", (e) => {
@@ -152,9 +156,14 @@ export default class TeacherController {
                                 <br>
                                 <span class="text-sm text-muted">${exam.questions.length} Qs .${assignments.length} Assigned</span>
                             </div>
-                            <button class="btn btn-outline btn-assign" data-id="${exam.id}">
-                                Assign
-                            </button>
+                            <div>
+                                <button class="btn btn-outline btn-assign" data-id="${exam.id}">
+                                    Assign
+                                </button>
+                                <button class="btn btn-outline btn-edit ml-2" data-id="${exam.id}">
+                                    Edit
+                                </button>
+                            </div>
               </div>
         `;
       })
@@ -170,6 +179,39 @@ export default class TeacherController {
     const modalEl = document.querySelector(".modal");
     modalEl.classList.remove("active");
   }
+  showEditExam(id) {
+    const exam = this.storageService.getExams().find((e) => e.id === id);
+    if (!exam) return alert("Exam not found");
+    this.editExamId = id;
+
+    // populate form values
+    document.getElementById("examName").value = exam.title;
+    document.querySelector('[name="exam-duration"]').value =
+      exam.durationMinutes;
+
+    // convert stored questions to editor format
+    this.newQuestions = exam.questions.map((q) => {
+      const correctIdx = q.options
+        ? q.options.findIndex((o) => o === q.correctAnswer)
+        : 0;
+      return {
+        id: q.id || `q_${Date.now()}`,
+        text: q.text || "",
+        image: q.image || null,
+        options: q.options ? q.options.slice() : ["", "", "", ""],
+        correctAnswerIdx: correctIdx >= 0 ? correctIdx : 0,
+        score: q.score || 1,
+        difficulty: q.difficulty || "Easy",
+      };
+    });
+
+    // update button text and open editor
+    const saveBtn = document.getElementById("saveExamBtn");
+    if (saveBtn) saveBtn.innerText = "💾 Save Changes";
+    this.renderExamEditor();
+    this.switchTab("createExamTab");
+  }
+
   renderAssignModal(query = "") {
     const assignments = this.storageService.getAssignments();
     const assignedStudentsIDs = assignments
@@ -359,6 +401,25 @@ export default class TeacherController {
       alert(
         "Exam must contain at least one question of each difficulty level (Easy, Medium, Hard)."
       );
+      return;
+    }
+
+    // If editing an existing exam update it instead
+    if (this.editExamId) {
+      const updatedExam = new Exam({
+        id: this.editExamId,
+        creatorId: this.currentUser.id,
+        title: document.getElementById("examName").value,
+        durationMinutes: document.querySelector('[name="exam-duration"]').value,
+        questions: finalQuestions,
+      });
+      this.storageService.updateExam(updatedExam);
+      alert("Exam updated!");
+      this.editExamId = null;
+      const saveBtn = document.getElementById("saveExamBtn");
+      if (saveBtn) saveBtn.innerText = "💾 Save Exam";
+      this.switchTab("examsTab");
+      this.renderExamsList();
       return;
     }
 

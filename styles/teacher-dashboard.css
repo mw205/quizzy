@@ -1,7 +1,10 @@
 @import url("./main.css");
 
+body{
+  height: 100vh;
+}
+
 .app-layout {
-  height: 100%;
   width: 100%;
 }
 
@@ -10,7 +13,6 @@
   padding: 1.5rem;
   width: var(--sidebar-width);
   border-right: 1px solid var(--border-color);
-  height: 100%;
 }
 .btn-primary {
   border: 1px solid var(--border-color) !important;
@@ -87,4 +89,136 @@ td {
 #studentList {
   min-height: 300px;
   overflow-y: auto;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .scrollable-area {
+    padding: 1rem;
+    margin-left: 0.5rem;
+  }
+  .sidebar {
+    padding: 1rem;
+  }
+  .app-layout {
+    height: fit-content;
+  }
+  table {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Stack layout for small screens */
+  .app-layout {
+    flex-direction: column;
+  }
+
+  /* Make sidebar a top bar */
+  .sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+  }
+
+  /* Nav buttons inline */
+  .nav-btn {
+    margin-top: 0;
+    font-size: 0.95rem;
+    padding: 0.4rem 0.6rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center;
+  }
+
+  nav {
+    padding: 0.6rem 1rem;
+  }
+
+  .main-content {
+    overflow: visible;
+  }
+
+  .scrollable-area {
+    padding: 0.75rem;
+    margin-left: 0;
+    margin-top: 0.5rem;
+  }
+
+  /* Make tables more flexible */
+  .table-container {
+    overflow-x: auto;
+  }
+  table {
+    min-width: 0;
+    width: 100%;
+  }
+  th,
+  td {
+    padding: 0.6rem 0.5rem;
+    white-space: normal;
+  }
+
+  /* Forms and grids stack vertically */
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  /* Exams list card layout for small screens */
+  #exams-list .card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  #exams-list .card > div {
+    width: 100%;
+  }
+  #exams-list .card > div strong {
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+  #exams-list .card > div .text-muted {
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+  #exams-list button {
+    width: 100%;
+  }
+
+  .modal-content {
+    max-width: 95%;
+    padding: 1rem;
+  }
+
+  /* Make images and question cards more fluid */
+  .question-card img {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-btn {
+    font-size: 0.85rem;
+    padding: 0.35rem 0.5rem;
+  }
+  .scrollable-area h3 {
+    font-size: 1.2rem;
+  }
+  .btn {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.9rem;
+  }
+  .card {
+    padding: 1rem;
+  }
+  h1 {
+    font-size: 1.2rem;
+  }
 }
