@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quizzy - Instructions</title>
+    <link rel="stylesheet" href="../styles/main.css" />
+    <link rel="stylesheet" href="../styles/student-quiz-style.css" />
+    <link rel="icon" href="/assets/Q.ico?v=1" type="image/x-icon" />
+    <link rel="shortcut icon" href="/assets/Q.ico?v=1" />
+  </head>
+  <body>
+    <nav class="flex w-full">
+      <h1 class="logo">
+        <img src="../assets/logo.png" alt="Quizzy Logo" width="100" />
+      </h1>
+      <div class="right flex">
+        <button class="btn btn-primary" id="mode">🌙</button>
+        <button class="btn btn-primary" id="logout">Logout</button>
+      </div>
+    </nav>
+    <main class="container flex flex-col items-center">
+      <section
+        class="card flex flex-col mt-4 quiz-instruction-container items-center"
+      >
+        <div class="quiz-header flex flex-col items-center p-4">
+          <h2 class="quiz-title mb-2" id="quizTitle">Animal Kingdom Quiz</h2>
+          <p class="quiz-description mb-4">
+            Test your knowledge about various animals and their habitats!
+          </p>
+        </div>
+        <div class="quiz-instructions flex flex-col items-center">
+          <ul class="quiz-details flex mb-4 mt-4 gap-6 items-center">
+            <li class="card text-center mb-2 flex flex-col quiz-question-count">
+              10 questions
+            </li>
+            <li class="card text-center mb-2 flex flex-col quiz-duration">
+              15 minuets
+            </li>
+          </ul>
+          <p class="mb-4">
+            Please read the following instructions carefully before starting the
+            quiz:
+          </p>
+          <ol class="instructions-list">
+            <li>Each question carries equal marks.</li>
+            <li>No negative marking for wrong answers.</li>
+            <li>Make sure to review your answers before submitting.</li>
+            <li>
+              You'll see if your answer is correct or incorrect right away
+            </li>
+          </ol>
+        </div>
+        <button class="btn-primary quiz-btn mb-4">Start Quiz</button>
+      </section>
+    </main>
+    <script type="module" src="../scripts/app.js"></script>
+  </body>
+</html>

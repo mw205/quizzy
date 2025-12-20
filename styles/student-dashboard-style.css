@@ -1,5 +1,10 @@
 @import "./main.css";
 
+html,body{
+  height: fit-content !important;
+  overflow: auto !important;
+}
+
 nav {
   background-color: var(--primary);
   padding: 1rem 2rem;
@@ -15,14 +20,6 @@ nav {
 
 .btn-primary {
   border: 1px solid var(--border-color) !important;
-}
-
-#mode {
-  padding: 0.7rem;
-  border-radius: 50%;
-  cursor: pointer;
-  margin-right: 1rem;
-  margin-left: 1rem;
 }
 
 .btn-primary:hover:not(:disabled) {
@@ -43,7 +40,6 @@ nav {
   height: 10rem;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid var(--primary-color);
 }
 
 .welcomeMessage {

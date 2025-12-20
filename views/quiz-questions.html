@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quizzy - Questions</title>
+    <link rel="stylesheet" href="../styles/main.css" />
+    <link rel="stylesheet" href="../styles/student-quiz-style.css" />
+    <link rel="icon" href="/assets/Q.ico?v=1" type="image/x-icon" />
+    <link rel="shortcut icon" href="/assets/Q.ico?v=1" />
+  </head>
+  <body>
+    <nav class="flex w-full">
+      <h1 class="logo">
+        <img src="../assets/logo.png" alt="Quizzy Logo" width="100" />
+      </h1>
+      <div class="right flex">
+        <button class="btn btn-primary" id="mode">🌙</button>
+        <button class="btn btn-primary" id="logout">Logout</button>
+      </div>
+    </nav>
+    <main class="container flex flex-col items-center">
+      <section
+        class="card flex flex-col mt-4 quiz-question-container items-center"
+      >
+        <div
+          class="quiz-img flex flex-col items-center"
+          id="questionImageContainer"
+        >
+          <img
+            src="../assets/img-placeholder.jpg"
+            id="questionImage"
+            alt="Quiz Image"
+          />
+        </div>
+        <div class="current-question-details-row flex w-full">
+          <p class="question-number" id="qIndex">question</p>
+          <p class="quiz-timer">
+            Time Left:
+            <span id="timerDisplay" class="quiz-duration timerDisplay"
+              >14:30</span
+            >
+          </p>
+        </div>
+        <p class="mb-4 question-title" id="qText">Question Text Here</p>
+        <div
+          class="quiz-question flex flex-col items-center"
+          id="choicesContainer"
+        ></div>
+        <button class="btn btn-primary quiz-btn mb-4" id="nextBtn" disabled>
+          Next
+        </button>
+      </section>
+    </main>
+    <script type="module" src="../scripts/app.js"></script>
+  </body>
+</html>

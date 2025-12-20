@@ -32,6 +32,11 @@
   margin: 0;
   padding: 0;
 }
+html,
+body {
+  height: 100%; /* Ensure html and body take full height */
+  scroll-behavior: smooth;
+}
 body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
@@ -40,6 +45,10 @@ body {
   min-height: 100vh;
   transition: background-color 0.3s, color 0.3s;
 }
+.text-gray-700 {
+  color: #374151;
+}
+
 .text-center {
   text-align: center;
 }
@@ -52,17 +61,59 @@ body {
 .items-center {
   align-items: center;
 }
+.h-8 {
+  height: 2rem;
+}
+.h-20 {
+  height: 5rem;
+}
+.w-8 {
+  width: 2rem;
+}
 .w-full {
   width: 100%;
 }
+.mt-2 {
+  margin-top: 0.5rem;
+}
 .mt-4 {
   margin-top: 1rem;
+}
+.mt-6 {
+  margin-top: 1.5rem;
+}
+.mb-1 {
+  margin-bottom: 0.25rem;
+}
+.mb-2 {
+  margin-bottom: 0.5rem;
 }
 .mb-4 {
   margin-bottom: 1rem;
 }
 .mb-6 {
   margin-bottom: 1.5rem;
+}
+.mr-2 {
+  margin-right: 0.5rem;
+}
+.p-2 {
+  padding: 0.5rem;
+}
+.p-3 {
+  padding: 0.75rem;
+}
+.p-4 {
+  padding: 1rem;
+}
+.rounded {
+  border-radius: var(--radius);
+}
+.border {
+  border: 1px solid var(--border-color);
+}
+.border-l-4 {
+  border-left-width: 1rem;
 }
 .gap-2 {
   gap: 0.5rem;
@@ -86,6 +137,12 @@ body {
   margin: 0 auto;
   width: 100%;
   padding: 1rem;
+}
+.justify-between {
+  justify-content: space-between;
+}
+.justify-end {
+  justify-content: flex-end;
 }
 .btn {
   display: inline-flex;
@@ -122,6 +179,10 @@ body {
 .btn-outline:hover {
   border-color: var(--primary);
   color: var(--primary);
+}
+.btn-sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
 }
 a {
   color: var(--primary);
@@ -171,45 +232,45 @@ textarea:focus {
 
 .login-container {
   max-width: 450px;
-  margin: 4rem auto;
+  margin: 0 auto;
 }
 
 /* Profile Upload Styles */
 .profile-upload {
-    position: relative;
-    width: 100px;
-    height: 100px;
-    margin: 0 auto 1.5rem;
-    cursor: pointer;
+  position: relative;
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 1.5rem;
+  cursor: pointer;
 }
 
 .profile-upload input[type="file"] {
-    display: none;
+  display: none;
 }
 
 .profile-preview {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid var(--primary);
-    background-color: var(--bg-body);
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--primary);
+  background-color: var(--bg-body);
 }
 
 .upload-overlay {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    background: var(--primary);
-    color: white;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    border: 2px solid var(--card-bg);
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: var(--primary);
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  border: 2px solid var(--card-bg);
 }
 
 .profile-pic {
@@ -223,4 +284,202 @@ textarea:focus {
   width: 80px;
   height: 80px;
   margin: 0 auto 1rem;
+}
+
+/* Grid for buttons/inputs */
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(200px, 1fr)
+  ); /* Responsive 2-column grid */
+  gap: 1rem;
+  width: 100%; /* Ensure it takes full width of its parent */
+}
+
+.sticky-top {
+  position: sticky;
+  top: 0;
+  background-color: var(--card-bg); /* Match card background */
+  padding: 1rem 0;
+  z-index: 10;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 1rem;
+}
+
+nav {
+  background-color: var(--primary);
+  padding: 1rem 2rem;
+  box-shadow: var(--shadow);
+  justify-content: space-between;
+  color: white;
+}
+
+.text-muted {
+  color: var(--text-muted);
+}
+.text-danger {
+  color: var(--danger);
+}
+#mode {
+  padding: 0.7rem;
+  border-radius: 50%;
+  cursor: pointer;
+  margin-right: 1rem;
+  margin-left: 1rem;
+}
+
+.hidden {
+  display: none;
+}
+.text-danger {
+  color: var(--danger);
+}
+.text-success {
+  color: var(--success);
+}
+.text-bold {
+  font-weight: bold;
+}
+.text-xl {
+  font-size: 1.25rem;
+}
+.text-lg {
+  font-size: 1.125rem;
+}
+
+.text-xs {
+  font-size: 0.75rem;
+}
+.text-sm {
+  font-size: 0.875rem;
+}
+
+.modal {
+  display: none;
+  align-items: center;
+  z-index: 1000;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+}
+.modal.active {
+  display: flex;
+}
+
+.modal-content {
+  background: var(--card-bg);
+  padding: 2rem;
+  border-radius: var(--radius);
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+.rounded-full {
+  border-radius: 9999px;
+}
+.bg-gray-50 {
+  background-color: #f9fafb;
+}
+.text-sm {
+  font-size: 0.875rem;
+}
+.cursor-pointer {
+  cursor: pointer;
+}
+.object-cover {
+  object-fit: cover;
+}
+
+.loader {
+  width: 48px;
+  height: 48px;
+  border: 5px solid #fff;
+  border-bottom-color: var(--primary);
+  border-radius: 50%;
+  display: hidden;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+.loader.active {
+  display: inline-block;
+}
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.font-semibold {
+  font-weight: 600;
+}
+
+.uppercase {
+  text-transform: uppercase;
+}
+.bg-green-50 {
+  background-color: #f0fdf4;
+}
+.bg-green-100 {
+  background-color: #dcfce7;
+}
+.text-green-800 {
+  color: #166534;
+}
+.border-green-300 {
+  border-color: #86efac;
+}
+.border-green-500 {
+  border-color: #22c55e;
+}
+
+.bg-red-50 {
+  background-color: #fef2f2;
+}
+.bg-red-100 {
+  background-color: #fee2e2;
+}
+.text-red-800 {
+  color: #991b1b;
+}
+.border-red-300 {
+  border-color: #fca5a5;
+}
+.border-red-500 {
+  border-color: #ef4444;
+}
+
+.bg-gray-50 {
+  background-color: #f9fafb;
+}
+.border-gray-200 {
+  border-color: #e5e7eb;
+}
+.text-gray-700 {
+  color: #374151;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-body);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-dark);
 }

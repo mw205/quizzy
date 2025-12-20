@@ -1,14 +1,156 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quizzy - Teacher Dashboard</title>
+    <link rel="stylesheet" href="../styles/teacher-dashboard.css" />
+    <link rel="icon" href="/assets/Q.ico?v=1" type="image/x-icon" />
+    <link rel="shortcut icon" href="/assets/Q.ico?v=1" />
+  </head>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teacher Dashboard</title>
-</head>
+  <body>
+    <header>
+      <nav class="flex w-full">
+        <h1 class="logo">
+          <img src="../assets/logo.png" alt="Quizzy Logo" width="100" />
+        </h1>
+        <div class="right flex">
+          <button class="btn btn-primary" id="mode">🌙</button>
+          <button class="btn btn-primary" id="logout">Logout</button>
+        </div>
+      </nav>
+    </header>
+    <div class="app-layout flex">
+      <aside class="sidebar flex flex-col">
+        <h1 class="logo">Hello, <b>Professor Smith</b></h1>
 
-<body>
-    Hello
-</body>
+        <button class="nav-btn w-full" data-tab="resultsTab">📊 Results</button>
+        <button class="nav-btn w-full" data-tab="examsTab">🧾 My Exams</button>
+        <button class="nav-btn w-full" data-tab="createExamTab">
+          ➕ Create Exam
+        </button>
+      </aside>
+      <div class="main-content flex flex-col">
+        <div class="scrollable-area">
+          <div class="tab-content" id="resultsTab">
+            <h3>Student Results</h3>
+            <div class="card table-container">
+              <table class="w-full">
+                <thead>
+                  <tr>
+                    <th>STUDENT</th>
+                    <th>EXAM</th>
+                    <th>SCORE</th>
+                    <th>DATE</th>
+                    <th>ACTIONS</th>
+                  </tr>
+                </thead>
+                <tbody id="resultsBody"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="tab-content" id="examsTab">
+            <h3>Manage Exams</h3>
+            <div id="exams-list" class="flex-col gap-2">
+              <div class="card flex justify-between items-center mb-2">
+                <div>
+                  <strong>Exam Title</strong>
+                  <br />
+                  <span class="text-sm text-muted">15 Qs . Assigned</span>
+                </div>
+                <button class="btn btn-outline btn-assign">Assign</button>
+              </div>
+            </div>
+          </div>
+          <div class="tab-content" id="createExamTab">
+            <div class="flex justify-between items-center mb-4">
+              <h3>Create New Exam</h3>
+              <button id="autoFillBtn" class="btn btn-outline btn-sm">
+                Auto Fill ✨
+              </button>
+            </div>
+            <form class="card" action="" id="create-exam-form">
+              <div class="grid-2">
+                <div class="input-group">
+                  <label for="examName"> Exam Name </label>
+                  <input
+                    type="text"
+                    name="exam-name"
+                    placeholder="e.g. Planets"
+                    id="examName"
+                  />
+                </div>
+                <div class="input-group">
+                  <label for="exam-duration"> Exam Duration </label>
+                  <input
+                    type="number"
+                    name="exam-duration"
+                    id="exam-duration"
+                    placeholder="15"
+                    value="15"
+                  />
+                </div>
+              </div>
+              <div class="sticky-top flex justify-between items-center">
+                <h3>Questions</h3>
+                <div>
+                  <span class="text-muted" id="questionsCount">0/15 Qs</span>
+                  <span class="text-danger" id="questionsTotalScore"
+                    >0/100 Pts</span
+                  >
+                </div>
+              </div>
+              <div id="questionsContainer"></div>
+              <div class="grid-2">
+                <button
+                  class="btn btn-outline"
+                  type="button"
+                  id="addQuestionBtn"
+                >
+                  + Add Questions
+                </button>
+                <button class="btn btn-primary" type="submit" id="saveExamBtn">
+                  💾 Save Exam
+                </button>
+              </div>
+            </form>
+          </div>
 
+          <div id="result-details-tab" class="tab-content hidden">
+            <button id="backToResultsBtn" class="btn btn-outline btn-sm mb-4">
+              ← Back to Results
+            </button>
+            <div class="card mb-4">
+              <h2 class="font-bold text-xl" id="detailExamTitle">Exam Title</h2>
+              <div class="text-muted" id="detailStudentInfo">
+                Student Name • Score
+              </div>
+            </div>
+            <div id="resultDetailsContent" class="flex flex-col gap-4"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="assignModal" class="modal">
+      <div class="modal-content">
+        <div class="flex justify-between items-center mb-4">
+          <h3>Assign Exams</h3>
+          <div class="btn-icon" id="closeModalIcon">&times;</div>
+        </div>
+        <input
+          type="text"
+          placeholder="Search .."
+          id="studentSearch"
+          class="w-full mb-4 p-2 border rounded"
+        />
+        <div class="mb-4 border rounded p-2" id="studentList"></div>
+        <div class="flex justify-end gap-2">
+          <button id="modalSave" class="btn btn-outline">Save</button>
+          <button id="modalCancel" class="btn btn-primary">Cancel</button>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="../scripts/app.js"></script>
+  </body>
 </html>
