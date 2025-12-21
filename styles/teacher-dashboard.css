@@ -13,6 +13,7 @@ body{
   padding: 1.5rem;
   width: var(--sidebar-width);
   border-right: 1px solid var(--border-color);
+  height: 100vh;
 }
 .btn-primary {
   border: 1px solid var(--border-color) !important;
@@ -124,6 +125,7 @@ td {
     justify-content: space-between;
     gap: 0.5rem;
     padding: 0.5rem 1rem;
+    height: auto;
   }
 
   /* Nav buttons inline */
