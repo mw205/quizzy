@@ -113,22 +113,48 @@ _(You can also register new student accounts via the "Create Student Account" li
 
 ## 📸 Screenshots
 
-- **Dashboards:** distinct interfaces for teachers to manage content and students to track progress.
+## 📸 Screenshots
+
   <img src="./Screenshots/student-dashboard1.png">
   <img src="./Screenshots/student-dashboard2.png">
   <img src="./Screenshots/teacher-dashboard1.png">
   <img src="./Screenshots/teacher-dashboard2.png">
   <img src="./Screenshots/teacher-dashboard3.png">
-
-- **Quiz Interface:** Clean, focused layout with a countdown timer and progress tracking.
-
-<img src="./Screenshots/quiz-interface-instructions.png">
-<img src="./Screenshots/quiz-interface.png">
-
-- **Results:** detailed breakdown showing user answers vs. correct answers.
-
-<img src="./Screenshots/results-interface1.png">
-<img src="./Screenshots/results-interface2.png">
+<table align="center">
+    <tr>
+        <td colspan="5" align="center">
+            <h3>Dashboards</h3>
+            <p>Distinct interfaces for teachers to manage content and students to track progress.</p>
+        </td>
+    </tr>
+    <tr>
+        <td><img src="./Screenshots/student-dashboard1.png" alt="Student Dashboard 1" width="200"/></td>
+        <td><img src="./Screenshots/student-dashboard2.png" alt="Student Dashboard 2" width="200"/></td>
+        <td><img src="./Screenshots/teacher-dashboard1.png" alt="Teacher Dashboard 1" width="200"/></td>
+        <td><img src="./Screenshots/teacher-dashboard2.png" alt="Teacher Dashboard 2" width="200"/></td>
+        <td><img src="./Screenshots/teacher-dashboard3.png" alt="Teacher Dashboard 3" width="200"/></td>
+    </tr>
+    <tr>
+        <td colspan="5" align="center">
+            <h3>Quiz Interface</h3>
+            <p>Clean, focused layout with a countdown timer and progress tracking.</p>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2" align="center"><img src="./Screenshots/quiz-interface-instructions.png" alt="Quiz Instructions" width="400"/></td>
+        <td colspan="3" align="center"><img src="./Screenshots/quiz-interface.png" alt="Quiz Interface" width="400"/></td>
+    </tr>
+    <tr>
+        <td colspan="5" align="center">
+            <h3>Results</h3>
+            <p>Detailed breakdown showing user answers vs. correct answers.</p>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="3" align="center"><img src="./Screenshots/results-interface1.png" alt="Results Interface 1" width="400"/></td>
+        <td colspan="2" align="center"><img src="./Screenshots/results-interface2.png" alt="Results Interface 2" width="400"/></td>
+    </tr>
+</table>
 
 ---
 
