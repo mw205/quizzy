@@ -402,7 +402,7 @@ nav {
   border: 5px solid #fff;
   border-bottom-color: var(--primary);
   border-radius: 50%;
-  display: hidden;
+  display: none;
   box-sizing: border-box;
   animation: rotation 1s linear infinite;
 }

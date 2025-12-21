@@ -269,8 +269,9 @@ export default class TeacherController {
     document.getElementById(
       "questionsTotalScore"
     ).innerText = `${totalScore}/100 Pts`;
-    container.innerHTML = this.newQuestions.map(
-      (q, i) => `
+    container.innerHTML = this.newQuestions
+      .map(
+        (q, i) => `
             <div class="question-card bg-gray-50 border p-4 rounded mb-4">
                 <div class="flex justify-between mb-2">
                     <strong>Question ${i + 1}</strong>
@@ -334,7 +335,8 @@ export default class TeacherController {
                 </div>
             </div>
         `
-    );
+      )
+      .join("");
   }
   addQuestion() {
     this.newQuestions.push({
