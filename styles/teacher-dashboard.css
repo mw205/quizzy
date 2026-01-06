@@ -1,6 +1,6 @@
 @import url("./main.css");
 
-body{
+body {
   height: 100vh;
 }
 
@@ -14,6 +14,9 @@ body{
   width: var(--sidebar-width);
   border-right: 1px solid var(--border-color);
   height: 100vh;
+  position: sticky;
+  left: 0;
+  top: 0;
 }
 .btn-primary {
   border: 1px solid var(--border-color) !important;
@@ -90,6 +93,10 @@ td {
 #studentList {
   min-height: 300px;
   overflow-y: auto;
+}
+
+#resultDetailsContent img {
+  width: 30%;
 }
 
 /* Responsive adjustments */

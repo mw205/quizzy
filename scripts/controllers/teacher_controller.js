@@ -272,7 +272,7 @@ export default class TeacherController {
     container.innerHTML = this.newQuestions
       .map(
         (q, i) => `
-            <div class="question-card bg-gray-50 border p-4 rounded mb-4">
+            <div class="card question-card border p-4 rounded mb-4">
                 <div class="flex justify-between mb-2">
                     <strong>Question ${i + 1}</strong>
                     <button type="button" class="text-danger text-sm btn-remove-q btn-icon" data-index="${i}">❌</button>

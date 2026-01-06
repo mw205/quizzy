@@ -41,7 +41,7 @@ main {
   width: 40%;
   background-color: var(--primary);
   color: white;
-  padding: 3rem;
+  padding: 1rem;
   height: 30vh;
   justify-content: center;
   padding-top: 1.2rem;
@@ -50,14 +50,13 @@ main {
 .result-section {
   margin-top: 1rem;
   width: 40%;
-  font-size: 1.7rem;
-  min-width: fit-content;
+  font-size: 1.5rem;
+  /* min-width: fit-content; */
   height: fit-content;
   padding: 2rem;
   border-radius: 20px;
   box-shadow: var(--shadow);
   text-align: center;
-  height: 50vh;
   justify-content: center;
 }
 
@@ -76,10 +75,9 @@ main {
   width: 110%;
 }
 
-#reviewContainer{
+#reviewContainer {
   width: 40%;
-
-  min-width: fit-content;
+  min-width: 100%;
   padding: 2rem;
   font-size: 1.2rem;
 }
@@ -90,4 +88,15 @@ main {
   margin-top: 0.5rem;
   object-fit: cover;
   border-radius: 0.5rem;
+}
+
+@media (max-width: 800px) {
+  .greeting-massage,
+  .result-section {
+    width: 90%;
+    font-size: 1rem;
+  }
+  .score-row {
+    font-size: 1rem;
+  }
 }
