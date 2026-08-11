@@ -1,58 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Quizzy - Login</title>
-    <link rel="stylesheet" href="styles/main.css" />
-    <link rel="icon" href="/assets/Q.ico?v=1" type="image/x-icon" />
-    <link rel="shortcut icon" href="/assets/Q.ico?v=1" />
-  </head>
 
-  <body>
-    <div class="container login-container">
-      <h1 class="text-center mb-6">
-        <img src="./assets/quizzy logo.png" alt="Quizzy Logo" width="250" />
-      </h1>
-      <div class="card mb-4">
-        <div class="login-form">
-          <h2 class="mb-6">Student Login</h2>
-          <form action="" id="loginForm">
-            <div class="input-group">
-              <label for="username">Username</label>
-              <input
-                type="text"
-                id="username"
-                name="username"
-                placeholder="username"
-                required
-              />
-            </div>
-            <div class="input-group">
-              <label for="password">Password</label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                placeholder="password"
-                required
-              />
-            </div>
-            <button class="btn w-full btn-primary mb-4" type="submit">
-              Login
-            </button>
-          </form>
-          <p class="text-center">
-            <a href="views/register.html">Create Student Account</a>
-          </p>
-          <hr class="mt-4 mb-4" />
-          <p class="text-center">
-            <a href="views/teacher-login.html">Login As a teacher</a>
-          </p>
-        </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quizzy - Login</title>
+  <link rel="stylesheet" href="styles/main.css" />
+  <link rel="icon" href="/assets/Q.ico?v=1" type="image/x-icon" />
+  <link rel="shortcut icon" href="/assets/Q.ico?v=1" />
+</head>
+
+<body>
+  <div class="container login-container">
+    <h1 class="text-center mb-6">
+      <img src="./assets/quizzy logo.png" alt="Quizzy Logo" width="250" />
+    </h1>
+    <div class="card mb-4">
+      <div class="login-form">
+        <h2 class="mb-6">Student Login</h2>
+        <form action="" id="loginForm">
+          <div class="input-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" placeholder="username" required />
+          </div>
+          <div class="input-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="password" required />
+          </div>
+          <button class="btn w-full btn-primary mb-4" type="submit">
+            Login
+          </button>
+        </form>
+        <p class="text-center">
+          <a href="views/register.html">Create Student Account</a>
+        </p>
+        <hr class="mt-4 mb-4" />
+        <p class="text-center">
+          <a href="views/teacher-login.html">Login As a teacher</a>
+        </p>
       </div>
     </div>
+  </div>
 
-    <script type="module" src="scripts/app.js"></script>
-  </body>
+  <script type="module" src="scripts/app.js"></script>
+</body>
+
 </html>
