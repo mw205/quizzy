@@ -9,9 +9,10 @@ export default class AuthService {
       .getUsers()
       .find(
         (user) =>
-          user.username === username &&
+          user.username.trim().toLowerCase() ===
+            username.trim().toLowerCase() &&
           user.role === "student" &&
-          user.password === password
+          user.password === password,
       );
     if (user) {
       localStorage.setItem("currentUser", JSON.stringify(user));
@@ -26,9 +27,10 @@ export default class AuthService {
       .getUsers()
       .find(
         (user) =>
-          user.username === username &&
+          user.username.trim().toLowerCase() ===
+            username.trim().toLowerCase() &&
           user.role === "teacher" &&
-          user.password === password
+          user.password === password,
       );
     if (user) {
       localStorage.setItem("currentUser", JSON.stringify(user));

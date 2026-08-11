@@ -75,9 +75,14 @@ export default class TeacherController {
         }
       });
     document
-      .getElementById("backToResultsBtn")
-      ?.addEventListener("click", () => this.closeResultView());
+      .querySelectorAll(".constraint-input")
+      .forEach((input) => input.addEventListener("input", () => this.updateConstraintSummary()));
+    document
+      .getElementById("generateExamBtn")
+      ?.addEventListener("click", () => this.handleGenerateOptimumExam());
+    this.updateConstraintSummary();
   }
+
 
   switchTab(tabId) {
     document
@@ -296,11 +301,17 @@ export default class TeacherController {
                       q.text
                     }" data-index="${i}" data-field="text">
                 </div>
-                <div class="grid-2 mb-2 gap-2">
+                    <select data-index="${i}" data-field="chapter" class="w-full p-2 border rounded">
+                        <option value="ch_1" ${q.chapter === "ch_1" ? "selected" : ""}>Chapter 1</option>
+                        <option value="ch_2" ${q.chapter === "ch_2" ? "selected" : ""}>Chapter 2</option>
+                        <option value="ch_3" ${q.chapter === "ch_3" ? "selected" : ""}>Chapter 3</option>
+                    </select>
+                </div>
+                <div class="grid-3 mb-2 gap-2">
                     ${q.options
                       .map(
                         (opt, oi) => `
-                        <input type="text" placeholder="Option ${
+                        <input type="text" placeholder="Choice ${
                           oi + 1
                         }" value="${opt}" data-index="${i}" data-field="option-${oi}">
                     `
@@ -314,23 +325,31 @@ export default class TeacherController {
                             (_, oi) =>
                               `<option value="${oi}" ${
                                 q.correctAnswerIdx === oi ? "selected" : ""
-                              }>Correct: Option ${oi + 1}</option>`
+                              }>Correct: Choice ${oi + 1}</option>`
                           )
                           .join("")}
                     </select>
                     <select data-index="${i}" data-field="difficulty" class="w-full p-2 border rounded">
-                        <option value="Easy" ${
-                          q.difficulty === "Easy" ? "selected" : ""
-                        }>Easy</option>
-                        <option value="Medium" ${
-                          q.difficulty === "Medium" ? "selected" : ""
-                        }>Medium</option>
-                        <option value="Hard" ${
-                          q.difficulty === "Hard" ? "selected" : ""
-                        }>Hard</option>
+                        <option value="SIMPLE" ${
+                          q.difficulty === "SIMPLE" || q.difficulty === "Easy" ? "selected" : ""
+                        }>Simple</option>
+                        <option value="DIFFICULT" ${
+                          q.difficulty === "DIFFICULT" || q.difficulty === "Hard" ? "selected" : ""
+                        }>Difficult</option>
+                    </select>
+                    <select data-index="${i}" data-field="objective" class="w-full p-2 border rounded">
+                        <option value="REMEMBERING" ${
+                          q.objective === "REMEMBERING" ? "selected" : ""
+                        }>Remembering</option>
+                        <option value="UNDERSTANDING" ${
+                          q.objective === "UNDERSTANDING" ? "selected" : ""
+                        }>Understanding</option>
+                        <option value="CREATIVITY" ${
+                          q.objective === "CREATIVITY" ? "selected" : ""
+                        }>Creativity</option>
                     </select>
                     <input type="number" placeholder="Pts" value="${
-                      q.score
+                      q.score || 5
                     }" data-index="${i}" data-field="score" class="w-full p-2 border rounded">
                 </div>
             </div>
@@ -342,10 +361,12 @@ export default class TeacherController {
     this.newQuestions.push({
       id: `q_${Date.now()}`,
       text: "",
-      options: ["", "", "", ""],
+      chapter: "ch_1",
+      options: ["", "", ""],
       correctAnswerIdx: 0,
       score: 5,
-      difficulty: "Easy",
+      difficulty: "SIMPLE",
+      objective: "REMEMBERING",
     });
     this.renderExamEditor();
   }
@@ -354,25 +375,33 @@ export default class TeacherController {
     this.renderExamEditor();
   }
   autoFill() {
-    console.log("autofill");
+    console.log("autofill matrix");
 
-    this.newQuestions = Array(15)
+    const diffs = ["SIMPLE", "DIFFICULT"];
+    const objs = ["REMEMBERING", "UNDERSTANDING", "CREATIVITY"];
+    const chs = ["ch_1", "ch_2", "ch_3"];
+
+    this.newQuestions = Array(12)
       .fill(null)
       .map((_, i) => {
-        const score = i < 10 ? 6 : 8;
-        const difficulty = i < 5 ? "Easy" : i < 10 ? "Medium" : "Hard";
+        const diff = diffs[i % 2];
+        const obj = objs[Math.floor(i / 2) % 3];
+        const ch = chs[Math.floor(i / 4) % 3];
         return {
           id: `q_${Date.now()}_${i}`,
-          text: `Demo Question ${i + 1}`,
-          options: ["A", "B", "C", "D"],
+          text: `Sample Question ${i + 1} (${diff} - ${obj})`,
+          chapter: ch,
+          options: [`Choice 1 (Correct)`, `Choice 2`, `Choice 3`],
           correctAnswerIdx: 0,
-          score: score,
-          difficulty: difficulty,
+          score: 5,
+          difficulty: diff,
+          objective: obj,
         };
       });
-    document.getElementById("examName").value = "Auto Generated Masterclass";
+    document.getElementById("examName").value = "Software Engineering Midterm";
     this.renderExamEditor();
   }
+
   handleCreateExam(e) {
     e.preventDefault();
     //check if the number of questions is 15 or more.
@@ -565,4 +594,174 @@ export default class TeacherController {
   closeResultView() {
     this.switchTab("resultsTab");
   }
+
+  updateConstraintSummary() {
+    const ch1 = parseInt(document.getElementById("ch1Req")?.value || "0");
+    const ch2 = parseInt(document.getElementById("ch2Req")?.value || "0");
+    const ch3 = parseInt(document.getElementById("ch3Req")?.value || "0");
+    const simple = parseInt(document.getElementById("simpleReq")?.value || "0");
+    const difficult = parseInt(document.getElementById("difficultReq")?.value || "0");
+    const rem = parseInt(document.getElementById("remReq")?.value || "0");
+    const und = parseInt(document.getElementById("undReq")?.value || "0");
+    const cre = parseInt(document.getElementById("creReq")?.value || "0");
+
+    const chTotal = ch1 + ch2 + ch3;
+    const diffTotal = simple + difficult;
+    const objTotal = rem + und + cre;
+
+    const summaryEl = document.getElementById("totalsSummary");
+    const feedbackEl = document.getElementById("constraintFeedback");
+
+    if (summaryEl) {
+      summaryEl.innerText = `Chapters: ${chTotal} | Difficulty: ${diffTotal} | Objectives: ${objTotal}`;
+    }
+
+    if (feedbackEl) {
+      if (chTotal === diffTotal && diffTotal === objTotal) {
+        feedbackEl.innerText = `✅ All target totals match (${chTotal} Questions)`;
+        feedbackEl.className = "text-sm font-bold text-success";
+      } else {
+        feedbackEl.innerText = `❌ Mismatch! Chapter total (${chTotal}), Difficulty total (${diffTotal}), and Objective total (${objTotal}) must be equal.`;
+        feedbackEl.className = "text-sm font-bold text-danger";
+      }
+    }
+  }
+
+  handleGenerateOptimumExam() {
+    const ch1 = parseInt(document.getElementById("ch1Req")?.value || "0");
+    const ch2 = parseInt(document.getElementById("ch2Req")?.value || "0");
+    const ch3 = parseInt(document.getElementById("ch3Req")?.value || "0");
+    const simple = parseInt(document.getElementById("simpleReq")?.value || "0");
+    const difficult = parseInt(document.getElementById("difficultReq")?.value || "0");
+    const rem = parseInt(document.getElementById("remReq")?.value || "0");
+    const und = parseInt(document.getElementById("undReq")?.value || "0");
+    const cre = parseInt(document.getElementById("creReq")?.value || "0");
+
+    const chTotal = ch1 + ch2 + ch3;
+    const diffTotal = simple + difficult;
+    const objTotal = rem + und + cre;
+
+    if (chTotal !== diffTotal || diffTotal !== objTotal) {
+      alert("Cannot generate exam: Target totals must be equal across Chapters, Difficulties, and Educational Objectives.");
+      return;
+    }
+
+    // Ensure we have questions available
+    if (!this.newQuestions || this.newQuestions.length === 0) {
+      this.autoFill(); // seed matrix questions if bank is empty
+    }
+
+    const availableBank = this.newQuestions;
+    const targetN = chTotal;
+
+    // Filter matching questions
+    const ch1Qs = availableBank.filter((q) => q.chapter === "ch_1");
+    const ch2Qs = availableBank.filter((q) => q.chapter === "ch_2");
+    const ch3Qs = availableBank.filter((q) => q.chapter === "ch_3");
+
+    const selected = [
+      ...ch1Qs.slice(0, ch1),
+      ...ch2Qs.slice(0, ch2),
+      ...ch3Qs.slice(0, ch3),
+    ].slice(0, targetN);
+
+    // Calculate actual breakdown
+    const actCh1 = selected.filter((q) => q.chapter === "ch_1").length;
+    const actCh2 = selected.filter((q) => q.chapter === "ch_2").length;
+    const actCh3 = selected.filter((q) => q.chapter === "ch_3").length;
+
+    const actSimple = selected.filter((q) => q.difficulty === "SIMPLE").length;
+    const actDiff = selected.filter((q) => q.difficulty === "DIFFICULT").length;
+
+    const actRem = selected.filter((q) => q.objective === "REMEMBERING").length;
+    const actUnd = selected.filter((q) => q.objective === "UNDERSTANDING").length;
+    const actCre = selected.filter((q) => q.objective === "CREATIVITY").length;
+
+    const dev =
+      Math.abs(ch1 - actCh1) +
+      Math.abs(ch2 - actCh2) +
+      Math.abs(ch3 - actCh3) +
+      Math.abs(simple - actSimple) +
+      Math.abs(difficult - actDiff) +
+      Math.abs(rem - actRem) +
+      Math.abs(und - actUnd) +
+      Math.abs(cre - actCre);
+
+    const isExact = dev === 0;
+
+    // Render output
+    const outputEl = document.getElementById("generatedExamOutput");
+    const badgeEl = document.getElementById("matchScoreBadge");
+    const summaryBody = document.getElementById("distributionSummaryBody");
+    const qList = document.getElementById("generatedQuestionsList");
+
+    if (badgeEl) {
+      badgeEl.innerText = isExact
+        ? `Exact Match (Score: 0.0 Deviation)`
+        : `Closest Match (Score: ${dev.toFixed(1)} Deviation)`;
+      badgeEl.className = isExact
+        ? "badge bg-green-100 text-green-800 text-sm p-2"
+        : "badge bg-yellow-100 text-yellow-800 text-sm p-2";
+    }
+
+    const categories = [
+      { name: "Chapter 1 Questions", req: ch1, act: actCh1 },
+      { name: "Chapter 2 Questions", req: ch2, act: actCh2 },
+      { name: "Chapter 3 Questions", req: ch3, act: actCh3 },
+      { name: "Simple Difficulty", req: simple, act: actSimple },
+      { name: "Difficult Difficulty", req: difficult, act: actDiff },
+      { name: "Remembering Objective", req: rem, act: actRem },
+      { name: "Understanding Objective", req: und, act: actUnd },
+      { name: "Creativity Objective", req: cre, act: actCre },
+    ];
+
+    if (summaryBody) {
+      summaryBody.innerHTML = categories
+        .map(
+          (c) => `
+          <tr>
+            <td class="font-semibold">${c.name}</td>
+            <td>${c.req}</td>
+            <td>${c.act}</td>
+            <td>${c.req === c.act ? '<span class="text-success">✅ Met</span>' : '<span class="text-danger">⚠️ Difference</span>'}</td>
+          </tr>
+        `
+        )
+        .join("");
+    }
+
+    if (qList) {
+      qList.innerHTML = selected
+        .map(
+          (q, i) => `
+          <div class="border p-3 rounded bg-white shadow-sm">
+            <div class="flex justify-between items-start mb-2">
+              <strong>Question ${i + 1}: ${q.text}</strong>
+              <div class="flex gap-1">
+                <span class="badge bg-blue-100 text-blue-800">${q.chapter?.toUpperCase()}</span>
+                <span class="badge bg-purple-100 text-purple-800">${q.difficulty}</span>
+                <span class="badge bg-green-100 text-green-800">${q.objective}</span>
+              </div>
+            </div>
+            <ul class="list-disc pl-5 text-sm text-gray-700">
+              ${(q.options || [])
+                .map(
+                  (opt, oi) => `
+                <li class="${oi === q.correctAnswerIdx ? "font-bold text-green-700" : ""}">${opt} ${oi === q.correctAnswerIdx ? "✅ (Correct Choice)" : ""}</li>
+              `
+                )
+                .join("")}
+            </ul>
+          </div>
+        `
+        )
+        .join("");
+    }
+
+    if (outputEl) {
+      outputEl.classList.remove("hidden");
+      outputEl.scrollIntoView({ behavior: "smooth" });
+    }
+  }
 }
+
