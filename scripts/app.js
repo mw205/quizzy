@@ -15,13 +15,14 @@ export const handleAuthForms = (auth) => {
     loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const form = e.target;
-      const username = form.username.value;
+      const username = form.username?.value;
+      const email = form.email?.value;
       const password = form.password.value;
       let success = false;
       if (form.id === "loginForm") {
         success = await auth.loginAsStudent(username, password);
       } else {
-        success = await auth.loginAsTeacher(username, password);
+        success = await auth.loginAsTeacher(email, password);
       }
       if (success) {
         alert("Login successful!");
@@ -95,6 +96,23 @@ export const handleAuthForms = (auth) => {
       }
     });
   }
+  const teacherRegistrationForm = document.getElementById("teacherRegistrationForm");
+  if (teacherRegistrationForm) {
+    teacherRegistrationForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      try {
+        await auth.registerTeacher({
+          name: form.name.value,
+          email: form.email.value,
+          password: form.password.value,
+        });
+        window.location.href = "teacher-dashboard.html";
+      } catch (error) {
+        alert(error.message || "Could not create the teacher account.");
+      }
+    });
+  }
 };
 
 export const handleLogout = () => {
@@ -102,6 +120,7 @@ export const handleLogout = () => {
   if (logoutBtn) {
     logoutBtn.addEventListener("click", () => {
       localStorage.removeItem("currentUser");
+      localStorage.removeItem("backendAccessToken");
       window.location.href = "../index.html";
     });
   }

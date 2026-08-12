@@ -6,15 +6,11 @@
     <title>Quizzy - Teacher Dashboard</title>
     <link rel="stylesheet" href="../styles/teacher-dashboard.css" />
     <link rel="icon" href="/assets/Q.ico?v=1" type="image/x-icon" />
-    <link rel="shortcut icon" href="/assets/Q.ico?v=1" />
   </head>
-
   <body>
     <header>
       <nav class="flex w-full">
-        <h1 class="logo">
-          <img src="../assets/logo.png" alt="Quizzy Logo" width="100" />
-        </h1>
+        <h1 class="logo"><img src="../assets/logo.png" alt="Quizzy Logo" width="100" /></h1>
         <div class="right flex">
           <button class="btn btn-primary" id="mode">🌙</button>
           <button class="btn btn-primary" id="logout">Logout</button>
@@ -23,250 +19,127 @@
     </header>
     <div class="app-layout flex">
       <aside class="sidebar flex flex-col">
-        <h1 class="logo">Hello, <b>Professor Smith</b></h1>
-
-        <button class="nav-btn w-full" data-tab="resultsTab">📊 Results</button>
-        <button class="nav-btn w-full" data-tab="examsTab">🧾 My Exams</button>
-        <button class="nav-btn w-full" data-tab="createExamTab">
-          📝 Question Bank Manager
-        </button>
-        <button class="nav-btn w-full" data-tab="examBuilderTab">
-          🎯 Design & Generate Exam
-        </button>
+        <h1 class="logo">Hello, <b id="teacherName">Teacher</b></h1>
+        <button class="nav-btn w-full" data-tab="coursesTab">📚 Courses</button>
+        <button class="nav-btn w-full" data-tab="questionsTab">📝 Question Bank</button>
+        <button class="nav-btn w-full" data-tab="examBuilderTab">🎯 Design Exam</button>
+        <button class="nav-btn w-full" data-tab="examsTab">🧾 Generated Exams</button>
       </aside>
-      <div class="main-content flex flex-col">
+      <main class="main-content flex flex-col">
         <div class="scrollable-area">
-          <div class="tab-content" id="resultsTab">
-            <h3>Student Results</h3>
-            <div class="card table-container">
-              <table class="w-full">
-                <thead>
-                  <tr>
-                    <th>STUDENT</th>
-                    <th>EXAM</th>
-                    <th>SCORE</th>
-                    <th>DATE</th>
-                    <th>ACTIONS</th>
-                  </tr>
-                </thead>
-                <tbody id="resultsBody"></tbody>
-              </table>
-            </div>
-          </div>
-          <div class="tab-content" id="examsTab">
-            <h3>Manage Exams</h3>
-            <div id="exams-list" class="flex-col gap-2">
-              <div class="card flex justify-between items-center mb-2">
-                <div>
-                  <strong>Exam Title</strong>
-                  <br />
-                  <span class="text-sm text-muted">15 Qs . Assigned</span>
-                </div>
-                <button class="btn btn-outline btn-assign">Assign</button>
-              </div>
-            </div>
-          </div>
-          <div class="tab-content" id="createExamTab">
-            <div class="flex justify-between items-center mb-4">
-              <h3>Question Bank Manager (3 Choices • Simple/Difficult • Objectives)</h3>
-              <button id="autoFillBtn" class="btn btn-outline btn-sm">
-                Seed 12 Matrix Qs ✨
-              </button>
-            </div>
-            <form class="card" action="" id="create-exam-form">
+          <section class="tab-content hidden" id="coursesTab">
+            <h3>Courses and Chapters</h3>
+            <form class="card mb-4" id="createCourseForm">
+              <h4 class="mb-2">Create a course</h4>
               <div class="grid-2">
                 <div class="input-group">
-                  <label for="examName"> Question Set / Exam Title </label>
-                  <input
-                    type="text"
-                    name="exam-name"
-                    placeholder="e.g. Software Engineering Midterm"
-                    id="examName"
-                  />
+                  <label for="courseTitle">Course name</label>
+                  <input id="courseTitle" name="title" minlength="3" maxlength="100" required />
                 </div>
                 <div class="input-group">
-                  <label for="exam-duration"> Duration (Minutes) </label>
-                  <input
-                    type="number"
-                    name="exam-duration"
-                    id="exam-duration"
-                    placeholder="15"
-                    value="15"
-                  />
+                  <label for="chapterCount">Number of chapters</label>
+                  <input id="chapterCount" name="chapterCount" type="number" min="1" required />
                 </div>
               </div>
-              <div class="sticky-top flex justify-between items-center">
-                <h3>Question Items (3 Choices Required)</h3>
-                <div>
-                  <span class="text-muted" id="questionsCount">0 Qs</span>
-                  <span class="text-danger" id="questionsTotalScore"
-                    >0 Pts</span
-                  >
-                </div>
-              </div>
-              <div id="questionsContainer"></div>
-              <div class="grid-2">
-                <button
-                  class="btn btn-outline"
-                  type="button"
-                  id="addQuestionBtn"
-                >
-                  + Add Question
-                </button>
-                <button class="btn btn-primary" type="submit" id="saveExamBtn">
-                  💾 Save to Question Bank
-                </button>
-              </div>
+              <button class="btn btn-primary" type="submit">Create course</button>
+              <p id="courseStatus" class="text-sm" aria-live="polite"></p>
             </form>
-          </div>
+            <div id="courseList"></div>
+          </section>
 
-          <!-- New Exam Builder Tab -->
-          <div class="tab-content hidden" id="examBuilderTab">
-            <div class="flex justify-between items-center mb-4">
-              <h3>🎯 Design & Generate Optimum Exam</h3>
-              <span class="badge bg-blue-100 text-blue-800">Pedagogical Constraint Matcher</span>
-            </div>
-            
-            <div class="card mb-4">
-              <h4 class="mb-2 font-bold">1. Select Course</h4>
+          <section class="tab-content hidden" id="questionsTab">
+            <h3>Question Bank Manager</h3>
+            <form class="card" id="createQuestionForm">
+              <div class="grid-2">
+                <div class="input-group">
+                  <label for="questionCourseSelect">Course</label>
+                  <select id="questionCourseSelect"></select>
+                </div>
+                <div class="input-group">
+                  <label for="questionChapterSelect">Chapter</label>
+                  <select id="questionChapterSelect" name="chapterId" required></select>
+                </div>
+              </div>
               <div class="input-group">
-                <select id="builderCourseSelect" class="w-full p-2 border rounded">
-                  <option value="course_se">Software Engineering & Systems Design (3 Chapters)</option>
-                </select>
+                <label for="questionText">Question text</label>
+                <textarea id="questionText" name="text" required></textarea>
               </div>
-            </div>
+              <div class="grid-2">
+                <div class="input-group">
+                  <label for="difficulty">Difficulty</label>
+                  <select id="difficulty" name="difficulty"><option value="SIMPLE">Simple</option><option value="DIFFICULT">Difficult</option></select>
+                </div>
+                <div class="input-group">
+                  <label for="objective">Educational objective</label>
+                  <select id="objective" name="objective"><option value="REMEMBERING">Remembering</option><option value="UNDERSTANDING">Understanding</option><option value="CREATIVITY">Creativity</option></select>
+                </div>
+              </div>
+              <div class="input-group">
+                <label for="questionImage">Question image (optional)</label>
+                <input id="questionImage" type="file" accept="image/*" />
+                <input id="questionImageUrl" name="imageUrl" type="hidden" />
+              </div>
+              <h4 class="mb-2">Exactly three choices</h4>
+              <div class="grid-3">
+                <input name="choice" placeholder="Choice 1" required />
+                <input name="choice" placeholder="Choice 2" required />
+                <input name="choice" placeholder="Choice 3" required />
+              </div>
+              <div class="input-group">
+                <label for="correctChoice">Correct choice</label>
+                <select id="correctChoice" name="correctChoice"><option value="0">Choice 1</option><option value="1">Choice 2</option><option value="2">Choice 3</option></select>
+              </div>
+              <button class="btn btn-primary" type="submit">Save question</button>
+              <p id="questionStatus" class="text-sm" aria-live="polite"></p>
+            </form>
+          </section>
 
+          <section class="tab-content hidden" id="examBuilderTab">
+            <h3>Design and Generate an Exam</h3>
             <div class="card mb-4">
-              <h4 class="mb-2 font-bold">2. Specify Question Requirements</h4>
-              <p class="text-sm text-muted mb-4">Specify your requested question targets per Chapter, Difficulty level, and Educational Objective.</p>
-              
-              <div class="grid-3 mb-4 gap-4">
+              <div class="input-group">
+                <label for="builderCourseSelect">Course</label>
+                <select id="builderCourseSelect"></select>
+              </div>
+              <h4 class="mb-2">Questions per chapter</h4>
+              <div id="chapterRequirements"></div>
+              <div class="grid-2 mb-4">
                 <div class="border p-3 rounded">
-                  <h5 class="font-bold mb-2">📚 Questions per Chapter</h5>
-                  <div class="mb-2">
-                    <label class="text-sm">Chapter 1 Count:</label>
-                    <input type="number" id="ch1Req" value="4" min="0" class="w-full p-1 border rounded constraint-input">
-                  </div>
-                  <div class="mb-2">
-                    <label class="text-sm">Chapter 2 Count:</label>
-                    <input type="number" id="ch2Req" value="4" min="0" class="w-full p-1 border rounded constraint-input">
-                  </div>
-                  <div>
-                    <label class="text-sm">Chapter 3 Count:</label>
-                    <input type="number" id="ch3Req" value="4" min="0" class="w-full p-1 border rounded constraint-input">
-                  </div>
+                  <h4 class="mb-2">Difficulty</h4>
+                  <label>Simple <input id="simpleReq" class="constraint-input" type="number" min="0" value="0" /></label>
+                  <label>Difficult <input id="difficultReq" class="constraint-input" type="number" min="0" value="0" /></label>
                 </div>
-
                 <div class="border p-3 rounded">
-                  <h5 class="font-bold mb-2">⚡ Difficulty Breakdown</h5>
-                  <div class="mb-2">
-                    <label class="text-sm">Simple Questions:</label>
-                    <input type="number" id="simpleReq" value="6" min="0" class="w-full p-1 border rounded constraint-input">
-                  </div>
-                  <div>
-                    <label class="text-sm">Difficult Questions:</label>
-                    <input type="number" id="difficultReq" value="6" min="0" class="w-full p-1 border rounded constraint-input">
-                  </div>
-                </div>
-
-                <div class="border p-3 rounded">
-                  <h5 class="font-bold mb-2">🧠 Educational Objectives</h5>
-                  <div class="mb-2">
-                    <label class="text-sm">Remembering:</label>
-                    <input type="number" id="remReq" value="4" min="0" class="w-full p-1 border rounded constraint-input">
-                  </div>
-                  <div class="mb-2">
-                    <label class="text-sm">Understanding:</label>
-                    <input type="number" id="undReq" value="4" min="0" class="w-full p-1 border rounded constraint-input">
-                  </div>
-                  <div>
-                    <label class="text-sm">Creativity:</label>
-                    <input type="number" id="creReq" value="4" min="0" class="w-full p-1 border rounded constraint-input">
-                  </div>
+                  <h4 class="mb-2">Educational objectives</h4>
+                  <label>Remembering <input id="remReq" class="constraint-input" type="number" min="0" value="0" /></label>
+                  <label>Understanding <input id="undReq" class="constraint-input" type="number" min="0" value="0" /></label>
+                  <label>Creativity <input id="creReq" class="constraint-input" type="number" min="0" value="0" /></label>
                 </div>
               </div>
-
-              <!-- Live Totals Validator -->
-              <div id="liveConstraintStatus" class="p-3 rounded mb-4 border bg-gray-50 flex justify-between items-center">
-                <div>
-                  <strong>Constraint Totals:</strong>
-                  <span id="totalsSummary" class="ml-2 font-mono">Chapters: 12 | Difficulty: 12 | Objectives: 12</span>
-                </div>
-                <div id="constraintFeedback" class="text-sm font-bold text-success">
-                  ✅ All totals match (12 Questions)
-                </div>
+              <div class="p-3 rounded mb-4 border">
+                <strong>Constraint totals:</strong> <span id="totalsSummary"></span>
+                <p id="constraintFeedback" class="text-sm"></p>
               </div>
-
-              <button id="generateExamBtn" class="btn btn-primary w-full p-3 font-bold text-lg">
-                ⚡ Generate Optimum Exam Recommendation
-              </button>
+              <button id="generateExamBtn" class="btn btn-primary" type="button">Generate optimum recommendation</button>
+              <p id="builderStatus" class="text-sm" aria-live="polite"></p>
             </div>
-
-            <!-- Generated Exam Recommendation Output Container -->
             <div id="generatedExamOutput" class="hidden">
-              <div class="card mb-4 border-2 border-blue-500">
-                <div class="flex justify-between items-center mb-2">
-                  <h4 class="font-bold text-xl">🎉 Optimum Exam Recommendation</h4>
-                  <span id="matchScoreBadge" class="badge bg-green-100 text-green-800 text-sm p-2">
-                    Exact Match (Score: 0.0 Deviation)
-                  </span>
-                </div>
-                
-                <h5 class="font-bold mt-4 mb-2">Distribution Summary (Requested vs. Actual)</h5>
-                <div class="table-container mb-4">
-                  <table class="w-full text-sm border">
-                    <thead>
-                      <tr class="bg-gray-100">
-                        <th>CATEGORY</th>
-                        <th>REQUESTED TARGET</th>
-                        <th>ACTUAL GENERATED</th>
-                        <th>STATUS</th>
-                      </tr>
-                    </thead>
-                    <tbody id="distributionSummaryBody"></tbody>
-                  </table>
-                </div>
-
-                <h5 class="font-bold mb-2">Generated Question Paper</h5>
-                <div id="generatedQuestionsList" class="flex flex-col gap-3"></div>
+              <div class="card">
+                <h4>Generated recommendation</h4>
+                <span id="matchScoreBadge" class="badge"></span>
+                <div class="table-container mb-4"><table class="w-full"><thead><tr><th>Category</th><th>Requested</th><th>Actual</th><th>Status</th></tr></thead><tbody id="distributionSummaryBody"></tbody></table></div>
+                <div id="generatedQuestionsList"></div>
               </div>
             </div>
-          </div>
+          </section>
 
-
-          <div id="result-details-tab" class="tab-content hidden">
-            <button id="backToResultsBtn" class="btn btn-outline btn-sm mb-4">
-              ← Back to Results
-            </button>
-            <div class="card mb-4">
-              <h2 class="font-bold text-xl" id="detailExamTitle">Exam Title</h2>
-              <div class="text-muted" id="detailStudentInfo">
-                Student Name • Score
-              </div>
-            </div>
-            <div id="resultDetailsContent" class="flex flex-col gap-4"></div>
-          </div>
+          <section class="tab-content hidden" id="examsTab">
+            <div class="flex justify-between items-center mb-4"><h3>Generated Exams</h3><button id="refreshExamsBtn" class="btn btn-outline" type="button">Refresh</button></div>
+            <div id="exams-list"></div>
+          </section>
+          <p id="dashboardStatus" class="text-sm" aria-live="polite"></p>
         </div>
-      </div>
-    </div>
-    <div id="assignModal" class="modal">
-      <div class="modal-content">
-        <div class="flex justify-between items-center mb-4">
-          <h3>Assign Exams</h3>
-          <div class="btn-icon" id="closeModalIcon">&times;</div>
-        </div>
-        <input
-          type="text"
-          placeholder="Search .."
-          id="studentSearch"
-          class="w-full mb-4 p-2 border rounded"
-        />
-        <div class="mb-4 border rounded p-2" id="studentList"></div>
-        <div class="flex justify-end gap-2">
-          <button id="modalSave" class="btn btn-outline">Save</button>
-          <button id="modalCancel" class="btn btn-primary">Cancel</button>
-        </div>
-      </div>
+      </main>
     </div>
     <script type="module" src="../scripts/app.js"></script>
   </body>

@@ -1,4 +1,5 @@
 import Student from "../models/student.js";
+import { ApiService } from "./api_service.js";
 export default class AuthService {
   constructor(storageService) {
     this.storageService = storageService;
@@ -22,23 +23,38 @@ export default class AuthService {
     }
     return false;
   }
-  async loginAsTeacher(username, password) {
-    const user = this.storageService
-      .getUsers()
-      .find(
-        (user) =>
-          user.username.trim().toLowerCase() ===
-            username.trim().toLowerCase() &&
-          user.role === "teacher" &&
-          user.password === password,
+  async loginAsTeacher(email, password) {
+    try {
+      const response = await ApiService.login({ email, password });
+
+      if (response.data.role !== "TEACHER") {
+        throw new Error("This account is not a teacher account.");
+      }
+
+      localStorage.setItem("backendAccessToken", response.accessToken);
+      localStorage.setItem(
+        "currentUser",
+        JSON.stringify({ ...response.data, role: "teacher" }),
       );
-    if (user) {
-      localStorage.setItem("currentUser", JSON.stringify(user));
       return true;
-    } else {
-      alert("Invalid username or password");
+    } catch (error) {
+      alert(error.message || "Invalid email or password");
+      return false;
     }
-    return false;
+  }
+  async registerTeacher({ name, email, password }) {
+    const response = await ApiService.register({
+      name,
+      email,
+      password,
+      role: "TEACHER",
+    });
+    localStorage.setItem("backendAccessToken", response.accessToken);
+    localStorage.setItem(
+      "currentUser",
+      JSON.stringify({ ...response.data, role: "teacher" }),
+    );
+    return response.data;
   }
   async registerStudent(data) {
     const users = this.storageService.getUsers();
@@ -71,7 +87,7 @@ export default class AuthService {
       return null;
     }
     // handle incorrect role
-    if (role !== currentUser.role) {
+    if (role.toUpperCase() !== currentUser.role?.toUpperCase()) {
       window.location.href = "../views/index.html";
       return null;
     }

@@ -1,95 +1,77 @@
-const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-  ? 'http://localhost:3000'
-  : 'https://quizzy-backend.onrender.com'; // Production Render API URL
+const API_BASE_URL = window.QUIZZY_API_BASE_URL ||
+  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:3000'
+    : 'https://quizzy-backend.onrender.com');
 
 export class ApiService {
-  /**
-   * Fetch all questions belonging to a specific chapter from NestJS backend
-   */
-  static async getQuestionsByChapter(chapterId) {
-    try {
-      const res = await fetch(`${API_BASE_URL}/questions/chapter/${chapterId}`);
-      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-      return await res.json();
-    } catch (err) {
-      console.warn('API Error (getQuestionsByChapter): Falling back to client state', err);
-      return null;
+  static async request(path, { method = 'GET', body, headers = {} } = {}) {
+    const token = localStorage.getItem('backendAccessToken');
+    const requestHeaders = { ...headers };
+
+    if (token) {
+      requestHeaders.Authorization = `Bearer ${token}`;
     }
+
+    if (body && !(body instanceof FormData)) {
+      requestHeaders['Content-Type'] = 'application/json';
+    }
+
+    const response = await fetch(`${API_BASE_URL}${path}`, {
+      method,
+      headers: requestHeaders,
+      body: body instanceof FormData ? body : body ? JSON.stringify(body) : undefined,
+    });
+
+    const contentType = response.headers.get('content-type') || '';
+    const data = contentType.includes('application/json')
+      ? await response.json()
+      : await response.text();
+
+    if (!response.ok) {
+      const message = Array.isArray(data?.message)
+        ? data.message.join(', ')
+        : data?.message || data || `Request failed with status ${response.status}`;
+      throw new Error(message);
+    }
+
+    return data;
   }
 
-  /**
-   * Create a new question with 3 choices, difficulty, and objective
-   */
-  static async createQuestion(questionData) {
-    try {
-      const res = await fetch(`${API_BASE_URL}/questions`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(questionData),
-      });
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || 'Failed to create question');
-      }
-      return await res.json();
-    } catch (err) {
-      console.warn('API Error (createQuestion):', err);
-      throw err;
-    }
+  static login(credentials) {
+    return this.request('/auth/login', { method: 'POST', body: credentials });
   }
 
-  /**
-   * Run multi-dimensional constraint-matching algorithm to generate an optimum exam
-   */
-  static async generateOptimumExam(specifications) {
-    try {
-      const res = await fetch(`${API_BASE_URL}/exams/generate`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(specifications),
-      });
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || 'Failed to generate optimum exam');
-      }
-      return await res.json();
-    } catch (err) {
-      console.warn('API Error (generateOptimumExam):', err);
-      throw err;
-    }
+  static register(user) {
+    return this.request('/auth/register', { method: 'POST', body: user });
   }
 
-  /**
-   * Fetch all generated exams
-   */
-  static async getExams() {
-    try {
-      const res = await fetch(`${API_BASE_URL}/exams`);
-      if (!res.ok) throw new Error('Failed to fetch exams');
-      return await res.json();
-    } catch (err) {
-      console.warn('API Error (getExams):', err);
-      return null;
-    }
+  static getCourses() {
+    return this.request('/courses');
   }
 
-  /**
-   * Upload question diagram image to Cloudinary via NestJS backend
-   */
+  static createCourse(course) {
+    return this.request('/courses', { method: 'POST', body: course });
+  }
+
+  static getQuestionsByChapter(chapterId) {
+    return this.request(`/questions/chapter/${chapterId}`);
+  }
+
+  static createQuestion(question) {
+    return this.request('/questions', { method: 'POST', body: question });
+  }
+
+  static generateOptimumExam(requirements) {
+    return this.request('/exams', { method: 'POST', body: requirements });
+  }
+
+  static getExams() {
+    return this.request('/exams');
+  }
+
   static async uploadImage(file) {
     const formData = new FormData();
     formData.append('file', file);
-    try {
-      const res = await fetch(`${API_BASE_URL}/upload/image`, {
-        method: 'POST',
-        body: formData,
-      });
-      if (!res.ok) throw new Error('Image upload failed');
-      const data = await res.json();
-      return data.imageUrl;
-    } catch (err) {
-      console.warn('API Error (uploadImage):', err);
-      throw err;
-    }
+    return this.request('/upload/image', { method: 'POST', body: formData });
   }
 }
