@@ -1,67 +1,49 @@
 @import "./main.css";
 
-html,
-body {
-  height: fit-content !important;
-  overflow: auto !important;
-}
-
-nav {
-  background-color: var(--primary);
-  padding: 1rem 2rem;
-  box-shadow: var(--shadow);
-  justify-content: space-between;
-  color: white;
-}
-
-.logo {
-  font-size: 2rem;
-  font-weight: bold;
-}
-
-.btn-primary {
-  border: 1px solid var(--border-color) !important;
-}
-
-.btn-primary:hover:not(:disabled) {
-  border-color: transparent !important;
-}
-
+/* Results Layout */
 main {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2rem 0;
+  gap: var(--space-md);
+  padding: var(--space-md) 1rem var(--space-xl);
 }
 
 .greeting-massage {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
-  width: 40%;
-  background-color: var(--primary);
-  color: white;
-  padding: 1rem;
-  height: 30vh;
-  justify-content: center;
-  padding-top: 1.2rem;
+  width: 100%;
+  max-width: 760px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: #ffffff;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  text-align: center;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+}
+
+.greeting-massage h2 {
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  color: #ffffff;
 }
 
 .result-section {
-  margin-top: 1rem;
-  width: 40%;
-  font-size: 1.5rem;
-  /* min-width: fit-content; */
-  height: fit-content;
-  padding: 2rem;
-  border-radius: 20px;
-  box-shadow: var(--shadow);
+  width: 100%;
+  max-width: 760px;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
   text-align: center;
-  justify-content: center;
+}
+
+.quiz-result-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
 }
 
 .quiz-score {
-  font-size: 3rem;
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
+  font-weight: 800;
   color: var(--primary);
 }
 
@@ -69,33 +51,36 @@ main {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 1rem 0;
-  font-weight: bold;
-  font-size: 2rem;
-  width: 110%;
+  padding: 0.75rem 1rem;
+  background: var(--primary-bg);
+  border-radius: var(--radius);
+  font-weight: 700;
+  font-size: 1.25rem;
+  margin-top: 0.5rem;
 }
 
 #reviewContainer {
-  width: 40%;
-  min-width: 100%;
-  padding: 2rem;
-  font-size: 1.2rem;
+  width: 100%;
+  max-width: 760px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+#reviewContainer .card {
+  padding: var(--space-md);
+  border-radius: var(--radius-lg);
 }
 
 .result-question-image {
-  /* object-cover rounded */
-  width: 40%;
+  max-width: 280px;
+  width: 100%;
+  height: auto;
   margin-top: 0.5rem;
-  object-fit: cover;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
 }
 
-@media (max-width: 800px) {
-  .greeting-massage,
-  .result-section {
-    width: 90%;
-    font-size: 1rem;
-  }
+@media (max-width: 640px) {
   .score-row {
     font-size: 1rem;
   }

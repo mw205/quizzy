@@ -1,158 +1,68 @@
-# Quizzy 🧠✨
+# Quizzy Frontend 🧠✨
 
-**Quizzy** is a dynamic, web-based quiz management application built with vanilla JavaScript. It features a dual-role system (Teachers & Students) allowing for the creation, assignment, and execution of timed quizzes with a persistent data layer using `localStorage`.
+**Quizzy** is a clean, dynamic web application built with Vanilla JavaScript (ES6 Modules) and custom CSS. It connects to a NestJS backend REST API with PostgreSQL, Prisma ORM, and Cloudinary for authentication, course & chapter management, question bank management, dynamic exam generation (constraint optimization), and student exam attempts.
 
-## 🚀 Features
+## 🚀 Key Features
 
 ### 👨‍🏫 For Teachers
-
-- **Dashboard:** Central hub to manage exams and view student performance.
-- **Create & Edit Exams:**
-- Build exams with custom titles and durations.
-- Add multiple-choice questions with different difficulty levels (Easy, Medium, Hard).
-- **Image Support:** Upload images for questions (integrated with Cloudinary).
-- **Auto-Fill:** Quickly generate demo questions for testing.
-- **Validation:** Ensures exams meet standards (e.g., total score = 100, minimum 15 questions).
-
-- **Assign Exams:** Search for registered students and assign specific exams to them.
-- **Analyze Results:** View a table of student grades and drill down into detailed reports to see exactly which questions a student missed.
+- **Course & Chapter Management**: Create courses and specify chapter counts dynamically.
+- **Question Bank Manager**: Add questions to specific chapters with exactly 3 choices, 1 correct choice, difficulty level (Simple / Difficult), educational objective (Remembering / Understanding / Creativity), and optional image uploads via Cloudinary.
+- **Exam Designer**: Specify chapter question quotas, difficulty distribution, and educational objective targets. Run the optimum exam algorithm to receive exact or closest matching exam recommendations.
+- **Generated Exams List**: View all persisted exam configurations and deviation scores.
 
 ### 👩‍🎓 For Students
-
-- **Dashboard:** Track progress with stats like "Quizzes Taken" and "Average Score."
-- **Take Quizzes:**
-- Timed examination interface.
-- Randomized question and answer order to prevent cheating.
-- Responsive design for taking quizzes on different devices.
-
-- **Immediate Feedback:** Instantly view scores and review correct/incorrect answers upon completion.
-- **History:** Access a log of all completed quizzes and review past performance.
-
-### ⚙️ General
-
-- **Authentication:** Secure login and registration flows for students and teachers.
-- **Dark Mode:** Toggle between Light and Dark themes.
-- **Responsive Design:** Optimized for desktop, tablet, and mobile views.
-- **Data Persistence:** All data (users, exams, results) is saved locally in the browser.
+- **Student Dashboard**: View available exams dynamically loaded from the NestJS backend.
+- **Interactive Quiz Player**: Take timed exams with image support and choice validation.
+- **Results Review**: Instant score breakdown and detailed question-by-question review highlighting correct and incorrect answers.
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠️ Technology Stack
 
-- **Frontend:** HTML5, CSS3 (CSS Variables, Flexbox/Grid)
-- **Logic:** Vanilla JavaScript (ES6 Modules, Classes)
-- **Storage:** Browser `localStorage` (No backend database required)
-- **Services:** Cloudinary API (for image uploads)
+- **Frontend**: HTML5, Vanilla CSS (CSS Variables, Flexbox, Grid)
+- **Application Logic**: Vanilla JavaScript (ES6 Modules)
+- **API Services**: `ApiService` (Fetch API with JWT Authentication Bearer tokens)
+- **Backend API**: NestJS (Node.js / TypeScript / PostgreSQL / Prisma)
 
 ---
 
 ## 📂 Project Structure
 
 ```text
-/quizzy
+frontend/
 ├── index.html                  # Landing Page (Student Login)
-├── assets/                     # Images and Icons
-├── styles/                     # CSS Stylesheets
-│   ├── main.css                # Global styles & variables
-│   ├── teacher-dashboard.css   # Teacher-specific styles
-│   ├── student-quiz-style.css  # Quiz interface styles
-│   └── ...
-├── views/                      # HTML Pages
+├── README.md                   # Documentation
+├── assets/                     # Logos, placeholders, and icons
+├── styles/                     # CSS stylesheets
+│   ├── main.css                # Global styles, variables, & utilities
+│   ├── teacher-dashboard.css   # Teacher interface styles
+│   ├── student-dashboard-style.css # Student dashboard styles
+│   ├── student-quiz-style.css  # Quiz player styles
+│   └── quiz-result.css         # Quiz results styles
+├── views/                      # HTML views
 │   ├── register.html           # Student Registration
 │   ├── teacher-login.html      # Teacher Login
+│   ├── teacher-register.html   # Teacher Registration
 │   ├── student-dashboard.html  # Student Dashboard
 │   ├── teacher-dashboard.html  # Teacher Dashboard
-│   ├── quiz-questions.html     # Active Quiz Interface
-│   └── ...
-└── scripts/                    # JavaScript Logic
-    ├── app.js                  # Main entry point & routing
-    ├── data/                   # Initial seed data
-    ├── models/                 # Data models (User, Exam, Result, etc.)
-    ├── services/               # Auth, Storage, & Image services
-    └── controllers/            # Logic for specific views
-
+│   ├── quiz-instructions.html  # Exam Instructions
+│   ├── quiz-questions.html     # Active Quiz Player
+│   └── student-result.html     # Exam Results Review
+└── scripts/                    # Application logic
+    ├── app.js                  # Application entry point & routing
+    ├── services/
+    │   ├── api_service.js      # REST API client
+    │   └── auth_service.js     # JWT Auth manager
+    └── controllers/
+        ├── teacher_controller.js  # Teacher dashboard controller
+        ├── student-controller.js  # Student dashboard controller
+        └── quiz-controller.js     # Exam player & result controller
 ```
 
 ---
 
 ## 🚀 Getting Started
 
-Since Quizzy uses ES6 modules, it must be served via a local server (opening `index.html` directly as a file will cause CORS errors).
-
-1. **Clone or Download** the project folder.
-2. **Start a Local Server**:
-
-- If you use VS Code, install the **Live Server** extension and click "Go Live".
-- Or using Python: `python -m http.server` inside the project directory.
-- Or using Node/NPM: `npx serve`.
-
-3. **Open the App**: Navigate to `http://127.0.0.1:5500` (or your server's port).
-
----
-
-## 🔑 Demo Credentials
-
-The application comes pre-loaded with the following users (defined in `scripts/data/initial_data.js`):
-
-### **Teacher Accounts**
-
-| Username        | Password | Subject |
-| --------------- | -------- | ------- |
-| **Teachereman** | `123`    | Zoology |
-| **Mr.Science**  | `456`    | Botany  |
-
-### **Student Account**
-
-| Username        | Password |
-| --------------- | -------- |
-| **TestStudent** | `123`    |
-
-_(You can also register new student accounts via the "Create Student Account" link on the login page.)_
-
----
-
-## 📸 Screenshots
-
-<table align="center">
-    <tr>
-        <td colspan="6" align="center">
-            <h3>Dashboards</h3>
-            <p>Distinct interfaces for teachers to manage content and students to track progress.</p>
-        </td>
-    </tr>
-    <tr>
-        <td colspan="3" align="center"><img src="./Screenshots/student-dashboard1.png" alt="Student Dashboard 1"/></td>
-        <td colspan="3" align="center"><img src="./Screenshots/student-dashboard2.png" alt="Student Dashboard 2"/></td>
-        </tr>
-        <tr>
-        <td colspan="2" align="center"><img src="./Screenshots/teacher-dashboard1.png" alt="Teacher Dashboard 1"/></td>
-        <td colspan="2" align="center"><img src="./Screenshots/teacher-dashboard2.png" alt="Teacher Dashboard 2"/></td>
-        <td colspan="2" align="center"><img src="./Screenshots/teacher-dashboard3.png" alt="Teacher Dashboard 3"/></td>
-    </tr>
-    <tr>
-        <td colspan="6" align="center">
-            <h3>Quiz Interface</h3>
-            <p>Clean, focused layout with a countdown timer and progress tracking.</p>
-        </td>
-    </tr>
-    <tr>
-        <td colspan="3" align="center"><img src="./Screenshots/quiz-interface-instructions.png" alt="Quiz Instructions"/></td>
-        <td colspan="3" align="center"><img src="./Screenshots/quiz-interface.png" alt="Quiz Interface"/></td>
-    </tr>
-    <tr>
-        <td colspan="6" align="center">
-            <h3>Results</h3>
-            <p>Detailed breakdown showing user answers vs. correct answers.</p>
-        </td>
-    </tr>
-    <tr>
-        <td colspan="3" align="center"><img src="./Screenshots/results-interface1.png" alt="Results Interface 1"/></td>
-        <td colspan="3" align="center"><img src="./Screenshots/results-interface2.png" alt="Results Interface 2"/></td>
-    </tr>
-</table>
-
----
-
-## 🛡️ License
-
-This project is open-source and available for educational purposes.
+1. Ensure the NestJS backend is running at `http://localhost:3000` (or configured via `window.QUIZZY_API_BASE_URL`).
+2. Serve the `frontend/` directory using any local HTTP server (e.g. `npx serve` or VS Code Live Server).
+3. Open `index.html` in your browser.

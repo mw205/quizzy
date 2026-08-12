@@ -1,101 +1,62 @@
 import ExamController from "./controllers/quiz-controller.js";
 import StudentController from "./controllers/student-controller.js";
 import TeacherController from "./controllers/teacher_controller.js";
+import { ApiService } from "./services/api_service.js";
 import AuthService from "./services/auth_service.js";
-import { ImagesService } from "./services/images_service.js";
-import StorageService from "./services/storage_service.js";
-const storageService = new StorageService();
-const authService = new AuthService(storageService);
+
+const authService = new AuthService();
 
 export const handleAuthForms = (auth) => {
   const loginForm =
     document.getElementById("loginForm") ||
     document.getElementById("teacherLoginForm");
+
   if (loginForm) {
     loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const form = e.target;
-      const username = form.username?.value;
       const email = form.email?.value;
-      const password = form.password.value;
+      const password = form.password?.value;
       let success = false;
+
       if (form.id === "loginForm") {
-        success = await auth.loginAsStudent(username, password);
+        success = await auth.loginAsStudent(email, password);
       } else {
         success = await auth.loginAsTeacher(email, password);
       }
+
       if (success) {
-        alert("Login successful!");
         form.reset();
         if (form.id === "loginForm") {
-          // index.html lives at project root
           window.location.href = "views/student-dashboard.html";
         } else {
-          // teacher login lives in /views so use relative path within the folder
           window.location.href = "teacher-dashboard.html";
         }
       }
     });
   }
+
   const registrationForm = document.getElementById("registrationForm");
   if (registrationForm) {
-    const profileInput = document.getElementById("profilePic");
-    const profilePreview = document.getElementById("profilePreview");
-
-    if (profileInput && profilePreview) {
-      profileInput.addEventListener("change", (e) => {
-        const file = e.target.files[0];
-        if (file) {
-          if (profilePreview) profilePreview.src = URL.createObjectURL(file);
-        }
-      });
-    }
-
     registrationForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const form = e.target;
-      const name = form.name.value;
-      const username = form.username.value;
+      const name = form.name.value.trim();
+      const email = form.email.value.trim();
       const password = form.password.value;
-      const grade = form.grade.value;
-      const mobile = form.mobilenumber.value;
-      const profilePicInput = document.getElementById("profilePic");
-
-      // Check if user already exists
-      let profilePicUrl =
-        "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png";
-      if (profilePicInput && profilePicInput.files[0]) {
-        document.querySelector(".loader").classList.add("active");
-        try {
-          profilePicUrl = await ImagesService.uploadImage(
-            profilePicInput.files[0]
-          );
-          document.querySelector(".loader").classList.remove("active");
-        } catch (uploadError) {
-          console.error("Failed to upload profile picture:", uploadError);
-          alert("Failed to upload profile picture. Using default.");
-        }
-      }
 
       try {
-        await auth.registerStudent({
-          name,
-          username,
-          password,
-          grade: parseInt(grade),
-          mobile,
-          profilePic: profilePicUrl,
-        });
-        alert("Registration successful!");
+        await auth.registerStudent({ name, email, password });
+        alert("Account created successfully!");
         form.reset();
-        // register.html is in /views, so navigate within the same folder
         window.location.href = "student-dashboard.html";
       } catch (error) {
-        console.error("Error saving user:", error);
+        console.error("Error creating student account:", error);
         alert("An error occurred during registration: " + error.message);
       }
     });
   }
+
   const teacherRegistrationForm = document.getElementById("teacherRegistrationForm");
   if (teacherRegistrationForm) {
     teacherRegistrationForm.addEventListener("submit", async (e) => {
@@ -103,10 +64,11 @@ export const handleAuthForms = (auth) => {
       const form = e.target;
       try {
         await auth.registerTeacher({
-          name: form.name.value,
-          email: form.email.value,
+          name: form.name.value.trim(),
+          email: form.email.value.trim(),
           password: form.password.value,
         });
+        alert("Teacher account created successfully!");
         window.location.href = "teacher-dashboard.html";
       } catch (error) {
         alert(error.message || "Could not create the teacher account.");
@@ -121,29 +83,40 @@ export const handleLogout = () => {
     logoutBtn.addEventListener("click", () => {
       localStorage.removeItem("currentUser");
       localStorage.removeItem("backendAccessToken");
-      window.location.href = "../index.html";
+      const isRoot = window.location.pathname.endsWith("/index.html") || window.location.pathname === "/";
+      window.location.href = isRoot ? "index.html" : "../index.html";
     });
   }
 };
 
-const selectedMode = localStorage.getItem("selectedMode");
-if (selectedMode) {
-  document.body.classList.toggle("dark", selectedMode === "dark");
-}
+const applyTheme = (theme) => {
+  document.body.classList.toggle("dark", theme === "dark");
+  document.documentElement.setAttribute("data-bs-theme", theme);
+  const modeBtn = document.getElementById("mode");
+  if (modeBtn) {
+    modeBtn.innerHTML = theme === "dark" 
+      ? '<i class="fa-solid fa-sun text-warning"></i>' 
+      : '<i class="fa-solid fa-moon"></i>';
+  }
+};
 
-document.addEventListener("DOMContentLoaded", () => {
+const selectedMode = localStorage.getItem("selectedMode") || "light";
+applyTheme(selectedMode);
+
+document.addEventListener("DOMContentLoaded", async () => {
   handleAuthForms(authService);
   handleLogout();
-  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
   const path = window.location.pathname;
+
   if (path.includes("teacher-dashboard")) {
-    new TeacherController(authService, storageService);
+    new TeacherController(authService);
   } else if (path.includes("student-dashboard")) {
-    new StudentController(authService, storageService);
+    new StudentController(authService);
   } else if (path.includes("quiz-questions.html")) {
-    new ExamController(authService, storageService, "player");
+    new ExamController(authService, "player");
   } else if (path.includes("student-result.html")) {
-    new ExamController(authService, storageService, "results");
+    new ExamController(authService, "results");
   } else if (path.includes("quiz-instructions.html")) {
     if (!authService.requireAuth("student")) return;
 
@@ -152,86 +125,70 @@ document.addEventListener("DOMContentLoaded", () => {
     if (examIdFromUrl) localStorage.setItem("activeExamId", examIdFromUrl);
 
     const activeExamId = localStorage.getItem("activeExamId");
-    const exam = activeExamId
-      ? storageService.getExams().find((e) => e.id === activeExamId)
-      : null;
-
     const startBtn = document.querySelector(".quiz-btn");
 
-    if (exam) {
-      const titleEl = document.querySelector(".quiz-title");
-      const descEl = document.querySelector(".quiz-description");
-      const qCountEl = document.querySelector(".quiz-question-count");
-      const durEl = document.querySelector(".quiz-duration");
-      if (titleEl) titleEl.innerText = exam.title;
-      if (descEl) descEl.innerText = exam.description || "";
-      if (qCountEl) qCountEl.innerText = `${exam.questions.length} questions`;
-      if (durEl) durEl.innerText = `${exam.durationMinutes} minutes`;
+    if (activeExamId) {
+      try {
+        const exam = await ApiService.getExamById(activeExamId);
+        const titleEl = document.querySelector(".quiz-title");
+        const descEl = document.querySelector(".quiz-description");
+        const qCountEl = document.querySelector(".quiz-question-count");
+        const durEl = document.querySelector(".quiz-duration");
 
-      const existingResult = storageService
-        .getResults()
-        .find(
-          (r) =>
-            r.examId === exam.id &&
-            r.studentId === (currentUser && currentUser.id)
-        );
+        if (titleEl) titleEl.innerText = `${exam.course?.name || "Course"} Exam`;
+        if (descEl) descEl.innerText = `Exact constraint match score: ${exam.score}`;
+        if (qCountEl) qCountEl.innerHTML = `<i class="fa-solid fa-list-check me-2 text-primary"></i>${exam.totalQuestions || exam.examQuestions?.length || 0} Questions`;
+        if (durEl) durEl.innerHTML = `<i class="fa-regular fa-clock me-2 text-primary"></i>15 Minutes`;
 
-      if (existingResult) {
-        const note = document.createElement("p");
-        note.style.color = "#2c3e50";
-        note.style.fontWeight = "600";
-        note.style.marginTop = "8px";
-        note.innerText = `You have already completed this exam (${new Date(
-          existingResult.date
-        ).toLocaleDateString()}). You cannot retake it.`;
-        const container = document.querySelector(".quiz-instructions");
-        if (container) container.appendChild(note);
+        const completedExams = JSON.parse(localStorage.getItem("completedExams") || "{}");
+        const currentUser = authService.getCurrentUser();
+        const userExamKey = `${currentUser?.id}_${activeExamId}`;
 
-        if (startBtn) {
-          startBtn.disabled = true;
-          startBtn.innerText = "Completed — Review Result";
-          startBtn.addEventListener("click", () => {
-            localStorage.setItem("activeResultId", existingResult.id);
-            window.location.href = "student-result.html";
-          });
+        if (completedExams[userExamKey]) {
+          const note = document.createElement("div");
+          note.className = "alert alert-info mt-3 fw-semibold";
+          note.innerHTML = `<i class="fa-solid fa-circle-info me-2"></i>You have already completed this exam on ${new Date(completedExams[userExamKey].date).toLocaleDateString()}. You cannot retake it.`;
+
+          const container = document.querySelector(".quiz-instruction-container .card-body");
+          if (container) container.appendChild(note);
+
+          if (startBtn) {
+            startBtn.disabled = false;
+            startBtn.innerHTML = '<i class="fa-solid fa-eye me-2"></i>Review Result';
+            startBtn.addEventListener("click", () => {
+              localStorage.setItem("activeResultId", userExamKey);
+              window.location.href = "student-result.html";
+            });
+          }
+        } else {
+          if (startBtn) {
+            startBtn.disabled = false;
+            startBtn.addEventListener("click", () => {
+              localStorage.setItem("activeExamId", activeExamId);
+              window.location.href = "quiz-questions.html";
+            });
+          }
         }
-      } else {
-        if (startBtn) {
-          startBtn.disabled = false;
-          startBtn.addEventListener("click", () => {
-            localStorage.setItem("activeExamId", activeExamId);
-            localStorage.setItem("activeExamShuffle", Date.now().toString());
-            window.location.href = "quiz-questions.html";
-          });
-        }
+      } catch (err) {
+        console.error("Failed to fetch exam instructions:", err);
+        alert("Failed to load exam details from backend.");
       }
     } else {
       if (startBtn) {
         startBtn.addEventListener("click", () => {
-          alert(
-            "No active exam selected. Please start the quiz from your dashboard."
-          );
+          alert("No active exam selected. Please start the quiz from your dashboard.");
         });
       }
-      const info = document.createElement("p");
-      info.style.color = "#c0392b";
-      info.style.marginTop = "8px";
-      info.innerText =
-        "No exam found. Start the quiz from your dashboard to proceed.";
-      const container = document.querySelector(".quiz-instructions");
-      if (container) container.appendChild(info);
     }
   }
 
-  const mode = document.getElementById("mode");
-
-  if (mode) {
-    mode.addEventListener("click", () => {
-      const selectedMode = document.body.classList.contains("dark")
-        ? "light"
-        : "dark";
-      document.body.classList.toggle("dark");
-      localStorage.setItem("selectedMode", selectedMode);
+  const modeBtn = document.getElementById("mode");
+  if (modeBtn) {
+    modeBtn.addEventListener("click", () => {
+      const current = document.documentElement.getAttribute("data-bs-theme") || "light";
+      const nextTheme = current === "dark" ? "light" : "dark";
+      applyTheme(nextTheme);
+      localStorage.setItem("selectedMode", nextTheme);
     });
   }
 });

@@ -1,28 +1,25 @@
-import Student from "../models/student.js";
 import { ApiService } from "./api_service.js";
+
 export default class AuthService {
-  constructor(storageService) {
-    this.storageService = storageService;
+  async loginAsStudent(email, password) {
+    try {
+      const response = await ApiService.login({ email, password });
+      if (response.data.role !== "STUDENT") {
+        throw new Error("This account is not a student account.");
+      }
+
+      localStorage.setItem("backendAccessToken", response.accessToken);
+      localStorage.setItem(
+        "currentUser",
+        JSON.stringify({ ...response.data, role: "student" })
+      );
+      return true;
+    } catch (error) {
+      alert(error.message || "Invalid email or password");
+      return false;
+    }
   }
 
-  async loginAsStudent(username, password) {
-    const user = this.storageService
-      .getUsers()
-      .find(
-        (user) =>
-          user.username.trim().toLowerCase() ===
-            username.trim().toLowerCase() &&
-          user.role === "student" &&
-          user.password === password,
-      );
-    if (user) {
-      localStorage.setItem("currentUser", JSON.stringify(user));
-      return true;
-    } else {
-      alert("Invalid username or password");
-    }
-    return false;
-  }
   async loginAsTeacher(email, password) {
     try {
       const response = await ApiService.login({ email, password });
@@ -34,7 +31,7 @@ export default class AuthService {
       localStorage.setItem("backendAccessToken", response.accessToken);
       localStorage.setItem(
         "currentUser",
-        JSON.stringify({ ...response.data, role: "teacher" }),
+        JSON.stringify({ ...response.data, role: "teacher" })
       );
       return true;
     } catch (error) {
@@ -42,6 +39,7 @@ export default class AuthService {
       return false;
     }
   }
+
   async registerTeacher({ name, email, password }) {
     const response = await ApiService.register({
       name,
@@ -52,43 +50,55 @@ export default class AuthService {
     localStorage.setItem("backendAccessToken", response.accessToken);
     localStorage.setItem(
       "currentUser",
-      JSON.stringify({ ...response.data, role: "teacher" }),
+      JSON.stringify({ ...response.data, role: "teacher" })
     );
     return response.data;
   }
-  async registerStudent(data) {
-    const users = this.storageService.getUsers();
-    if (users.some((u) => u.username === data.username)) {
-      alert("username is already taken.");
-      throw new Error("Username is already taken.");
-    }
-    const student = new Student({
-      ...data,
-      id: "student_" + this.storageService.getUsers().length + 1,
-      role: "student",
-      profilePic: data.profilePic,
+
+  async registerStudent({ name, email, password }) {
+    const response = await ApiService.register({
+      name,
+      email,
+      password,
+      role: "STUDENT",
     });
-    this.storageService.addUser(student);
-    localStorage.setItem("currentUser", JSON.stringify(student));
-    return student;
+    localStorage.setItem("backendAccessToken", response.accessToken);
+    localStorage.setItem(
+      "currentUser",
+      JSON.stringify({ ...response.data, role: "student" })
+    );
+    return response.data;
   }
+
   getCurrentUser() {
-    return JSON.parse(localStorage.getItem("currentUser"));
+    try {
+      return JSON.parse(localStorage.getItem("currentUser"));
+    } catch {
+      return null;
+    }
   }
-  //to ensure that the user is authorized and authenticated
+
+  // Ensure that the user is authorized and authenticated
   requireAuth(role) {
     const currentUser = this.getCurrentUser();
+    const isRoot = window.location.pathname.endsWith("/index.html") || window.location.pathname === "/";
+    const prefix = isRoot ? "views/" : "";
+
     if (!currentUser) {
       if (role === "teacher") {
-        window.location.href = "../views/teacher-login.html";
+        window.location.href = `${prefix}teacher-login.html`;
       } else {
-        window.location.href = "../../views/student-dashboard.html";
+        window.location.href = isRoot ? "index.html" : "../index.html";
       }
       return null;
     }
-    // handle incorrect role
+
     if (role.toUpperCase() !== currentUser.role?.toUpperCase()) {
-      window.location.href = "../views/index.html";
+      if (currentUser.role?.toUpperCase() === "TEACHER") {
+        window.location.href = `${prefix}teacher-dashboard.html`;
+      } else {
+        window.location.href = `${prefix}student-dashboard.html`;
+      }
       return null;
     }
     return currentUser;

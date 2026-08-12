@@ -63,6 +63,29 @@ export default class TeacherController {
     document
       .getElementById('refreshExamsBtn')
       .addEventListener('click', () => this.loadExams());
+
+    const examsList = document.getElementById('exams-list');
+    if (examsList) {
+      examsList.addEventListener('click', (e) => {
+        const previewBtn = e.target.closest('.btn-preview-exam');
+        if (previewBtn) {
+          const examId = previewBtn.dataset.id;
+          this.previewExam(examId);
+        }
+      });
+    }
+
+    const closeModalBtn = document.getElementById('closePreviewModalBtn');
+    if (closeModalBtn) {
+      closeModalBtn.addEventListener('click', () => this.closePreviewModal());
+    }
+
+    const modal = document.getElementById('examPreviewModal');
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) this.closePreviewModal();
+      });
+    }
   }
 
   switchTab(tabId) {
@@ -94,43 +117,138 @@ export default class TeacherController {
     const examsList = document.getElementById('exams-list');
 
     if (!exams.length) {
-      examsList.innerHTML = '<p class="text-muted">No generated exams yet.</p>';
+      examsList.innerHTML = '<p class="text-muted py-4 text-center">No generated exams created yet.</p>';
       return;
     }
 
     examsList.innerHTML = exams
       .map(
         (exam) => `
-          <article class="card mb-2">
-            <strong>Generated exam</strong>
-            <p class="text-muted text-sm">${this.escapeHtml(exam.course.name)} · ${exam.totalQuestions} questions</p>
-            <p class="text-sm">${exam.isExactMatch ? '✅ Exact match' : '⚠️ Closest match'} · Deviation score: ${exam.score}</p>
-            <p class="text-sm text-muted">Created ${new Date(exam.createdAt).toLocaleString()}</p>
+          <article class="card border-0 shadow-sm rounded-4 mb-3 p-3">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+              <div>
+                <h6 class="fw-bold text-dark mb-1">
+                  <i class="fa-solid fa-file-lines me-2 text-primary"></i>${this.escapeHtml(exam.course?.name || 'Generated Exam')}
+                </h6>
+                <div class="text-muted text-sm mb-1">
+                  <i class="fa-solid fa-list-check me-1"></i>${exam.totalQuestions} questions
+                </div>
+                <div class="text-sm fw-semibold ${exam.isExactMatch ? 'text-success' : 'text-warning'}">
+                  <i class="fa-solid ${exam.isExactMatch ? 'fa-circle-check' : 'fa-triangle-exclamation'} me-1"></i>
+                  ${exam.isExactMatch ? 'Exact Match (Score: 0)' : `Closest Match (Deviation Score: ${exam.score})`}
+                </div>
+                <div class="text-muted text-xs mt-1">
+                  <i class="fa-regular fa-clock me-1"></i>Created ${new Date(exam.createdAt).toLocaleString()}
+                </div>
+              </div>
+              <button class="btn btn-outline-primary btn-sm fw-semibold btn-preview-exam" data-id="${exam.id}">
+                <i class="fa-solid fa-eye me-1"></i>Preview Exam
+              </button>
+            </div>
           </article>
         `,
       )
       .join('');
   }
 
+  async previewExam(examId) {
+    const modal = document.getElementById('examPreviewModal');
+    const modalTitle = document.getElementById('modalExamTitle');
+    const modalBody = document.getElementById('modalExamBody');
+
+    if (!modal || !modalBody) return;
+
+    try {
+      modalBody.innerHTML = '<p class="text-muted py-3 text-center"><i class="fa-solid fa-spinner fa-spin me-2"></i>Loading exam details...</p>';
+      
+      // Show Bootstrap modal
+      const bsModal = new bootstrap.Modal(modal);
+      bsModal.show();
+
+      const exam = await ApiService.getExamById(examId);
+      if (modalTitle) {
+        modalTitle.innerHTML = `<i class="fa-solid fa-file-signature me-2"></i>Preview: ${this.escapeHtml(exam.course?.name || 'Exam')} (${exam.totalQuestions} Questions)`;
+      }
+
+      const questions = (exam.examQuestions || []).map((eq) => eq.Question);
+
+      if (!questions.length) {
+        modalBody.innerHTML = '<p class="text-muted">No questions found in this exam.</p>';
+        return;
+      }
+
+      modalBody.innerHTML = `
+        <div class="mb-4">
+          <span class="badge ${exam.isExactMatch ? 'bg-success-subtle text-success border border-success-subtle' : 'bg-warning-subtle text-warning border border-warning-subtle'} px-3 py-2 fs-6">
+            <i class="fa-solid ${exam.isExactMatch ? 'fa-circle-check' : 'fa-triangle-exclamation'} me-1"></i>
+            ${exam.isExactMatch ? 'Exact Match (Score: 0)' : `Closest Match (Deviation Score: ${exam.score})`}
+          </span>
+          <span class="text-sm text-muted ms-2"><i class="fa-regular fa-calendar me-1"></i>Created ${new Date(exam.createdAt).toLocaleString()}</span>
+        </div>
+        <div class="d-flex flex-column gap-3">
+          ${questions
+            .map(
+              (question, index) => `
+                <article class="card border-0 shadow-sm rounded-3 p-3 bg-body-tertiary">
+                  <h6 class="fw-bold text-dark mb-1">
+                    Question ${index + 1}: ${this.escapeHtml(question.text)}
+                  </h6>
+                  <p class="text-muted text-xs mb-2">
+                    <span class="badge bg-secondary-subtle text-secondary me-1">${question.difficulty}</span>
+                    <span class="badge bg-info-subtle text-info me-1">${question.objective}</span>
+                  </p>
+                  ${question.imageUrl ? `<img class="img-fluid rounded mb-2 question-preview" src="${this.escapeHtml(question.imageUrl)}" alt="Question illustration" style="max-height: 200px;" />` : ''}
+                  <ol class="question-choice-list text-sm ps-3 mb-0">
+                    ${(question.choices || [])
+                      .map((choice) => `
+                        <li class="py-1 ${choice.isCorrect ? 'fw-bold text-success' : 'text-dark'}">
+                          ${this.escapeHtml(choice.text)}
+                          ${choice.isCorrect ? ' <i class="fa-solid fa-circle-check text-success ms-1"></i> (Correct)' : ''}
+                        </li>
+                      `)
+                      .join('')}
+                  </ol>
+                </article>
+              `,
+            )
+            .join('')}
+        </div>
+      `;
+    } catch (error) {
+      console.error('Failed to load exam preview:', error);
+      modalBody.innerHTML = `<p class="text-danger"><i class="fa-solid fa-circle-xmark me-1"></i>Failed to load exam preview: ${this.escapeHtml(error.message)}</p>`;
+    }
+  }
+
+  closePreviewModal() {
+    const modal = document.getElementById('examPreviewModal');
+    if (modal) {
+      const bsModal = bootstrap.Modal.getInstance(modal);
+      if (bsModal) bsModal.hide();
+    }
+  }
+
   renderCourseList() {
     const courseList = document.getElementById('courseList');
 
     if (!this.courses.length) {
-      courseList.innerHTML = '<p class="text-muted">Create a course to begin building its question bank.</p>';
+      courseList.innerHTML = '<p class="text-muted py-3 text-center">Create a course to begin building its question bank.</p>';
       return;
     }
 
     courseList.innerHTML = this.courses
       .map(
         (course) => `
-          <article class="card mb-2">
-            <strong>${this.escapeHtml(course.name)}</strong>
-            <p class="text-muted text-sm">${course.chapterCount} chapter(s)</p>
-            <ul class="text-sm">
+          <article class="card border-0 shadow-sm rounded-4 mb-3 p-4">
+            <h5 class="fw-bold text-dark mb-1">
+              <i class="fa-solid fa-book me-2 text-primary"></i>${this.escapeHtml(course.name)}
+            </h5>
+            <p class="text-muted text-sm mb-2">${course.chapterCount} chapter(s)</p>
+            <ul class="text-sm ps-3 mb-0 text-muted">
               ${course.chapters
                 .map(
                   (chapter) =>
-                    `<li>Chapter ${chapter.number}: ${this.escapeHtml(chapter.title)} (${chapter._count.questions} questions)</li>`,
+                    `<li class="mb-1">Chapter ${chapter.number}: <strong class="text-dark">${this.escapeHtml(chapter.title)}</strong> (${chapter._count.questions} questions available)</li>`,
                 )
                 .join('')}
             </ul>
@@ -193,10 +311,12 @@ export default class TeacherController {
       .map(
         (chapter) => `
           <div class="mb-2">
-            <label class="text-sm" for="chapter-${chapter.id}">Chapter ${chapter.number}: ${this.escapeHtml(chapter.title)} (${chapter._count.questions} available)</label>
+            <label class="form-label text-sm fw-semibold" for="chapter-${chapter.id}">
+              Chapter ${chapter.number}: ${this.escapeHtml(chapter.title)} (${chapter._count.questions} available)
+            </label>
             <input
               id="chapter-${chapter.id}"
-              class="w-full p-1 border rounded chapter-requirement"
+              class="form-control chapter-requirement"
               data-chapter-id="${chapter.id}"
               type="number"
               min="0"
@@ -291,9 +411,9 @@ export default class TeacherController {
 
     const feedback = document.getElementById('constraintFeedback');
     const valid = chapterTotal > 0 && chapterTotal === difficultyTotal && difficultyTotal === objectiveTotal;
-    feedback.textContent = valid
-      ? `✅ All target totals match (${chapterTotal} questions)`
-      : '❌ Totals must be equal and greater than zero.';
+    feedback.innerHTML = valid
+      ? `<i class="fa-solid fa-circle-check text-success me-1"></i>All target totals match (${chapterTotal} questions)`
+      : '<i class="fa-solid fa-circle-xmark text-danger me-1"></i>Totals must be equal and greater than zero.';
     feedback.className = `text-sm font-bold ${valid ? 'text-success' : 'text-danger'}`;
   }
 
@@ -360,10 +480,10 @@ export default class TeacherController {
     ];
 
     const badge = document.getElementById('matchScoreBadge');
-    badge.textContent = result.isExactMatch
-      ? 'Exact match (score: 0)'
-      : `Closest match (score: ${result.score})`;
-    badge.className = `badge text-sm p-2 ${result.isExactMatch ? 'text-success' : 'text-danger'}`;
+    badge.innerHTML = result.isExactMatch
+      ? '<i class="fa-solid fa-circle-check me-1"></i>Exact match (score: 0)'
+      : `<i class="fa-solid fa-triangle-exclamation me-1"></i>Closest match (score: ${result.score})`;
+    badge.className = `badge fs-6 p-2 ${result.isExactMatch ? 'bg-success-subtle text-success border border-success-subtle' : 'bg-warning-subtle text-warning border border-warning-subtle'}`;
 
     document.getElementById('distributionSummaryBody').innerHTML = rows
       .map(
@@ -372,7 +492,7 @@ export default class TeacherController {
             <td>${this.escapeHtml(row.label)}</td>
             <td>${row.requested}</td>
             <td>${row.actual}</td>
-            <td>${row.requested === row.actual ? '✅ Met' : '⚠️ Difference'}</td>
+            <td>${row.requested === row.actual ? '<span class="text-success"><i class="fa-solid fa-circle-check me-1"></i>Met</span>' : '<span class="text-warning"><i class="fa-solid fa-triangle-exclamation me-1"></i>Difference</span>'}</td>
           </tr>
         `,
       )
@@ -381,13 +501,20 @@ export default class TeacherController {
     document.getElementById('generatedQuestionsList').innerHTML = result.questions
       .map(
         (question, index) => `
-          <article class="card mb-2">
-            <strong>Question ${index + 1}: ${this.escapeHtml(question.text)}</strong>
-            <p class="text-muted text-sm">${this.escapeHtml(chapterNames.get(question.chapterId) || 'Chapter')} · ${question.difficulty} · ${question.objective}</p>
-            ${question.imageUrl ? `<img class="question-preview" src="${this.escapeHtml(question.imageUrl)}" alt="Question illustration" />` : ''}
-            <ol class="question-choice-list">
+          <article class="card border-0 shadow-sm rounded-3 mb-2 p-3 bg-body-tertiary">
+            <h6 class="fw-bold text-dark mb-1">
+              Question ${index + 1}: ${this.escapeHtml(question.text)}
+            </h6>
+            <p class="text-muted text-xs mb-2">${this.escapeHtml(chapterNames.get(question.chapterId) || 'Chapter')} · ${question.difficulty} · ${question.objective}</p>
+            ${question.imageUrl ? `<img class="img-fluid rounded mb-2 question-preview" src="${this.escapeHtml(question.imageUrl)}" alt="Question illustration" style="max-height: 200px;" />` : ''}
+            <ol class="question-choice-list text-sm ps-3 mb-0">
               ${question.choices
-                .map((choice) => `<li>${this.escapeHtml(choice.text)}${choice.isCorrect ? ' ✅' : ''}</li>`)
+                .map((choice) => `
+                  <li class="${choice.isCorrect ? 'fw-bold text-success' : ''}">
+                    ${this.escapeHtml(choice.text)}
+                    ${choice.isCorrect ? ' <i class="fa-solid fa-circle-check text-success ms-1"></i>' : ''}
+                  </li>
+                `)
                 .join('')}
             </ol>
           </article>

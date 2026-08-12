@@ -1,37 +1,30 @@
+import { ApiService } from "../services/api_service.js";
+
 export default class StudentController {
-  constructor(authService, storageService) {
+  constructor(authService) {
     this.auth = authService;
-    this.storageService = storageService;
     this.user = this.auth.requireAuth("student");
     if (this.user) {
       this.init();
       window.studentApp = this;
     }
   }
-  init() {
+
+  async init() {
     const usernameDisplays = document.querySelectorAll(".username");
     const gradeDisplays = document.querySelectorAll(".grade");
-    const profilePicDisplay = document.getElementById("profile-picture");
-    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    const currentUser = this.auth.getCurrentUser();
 
-    if (window.location.pathname.includes("student-dashboard.html")) {
-      if (profilePicDisplay) {
-        if (currentUser) {
-          profilePicDisplay.src = currentUser.profilePic;
-        }
-      }
-      gradeDisplays.forEach((el) => {
-        if (currentUser) {
-          el.textContent = `Grade: ${currentUser.grade}`;
-        }
-      });
+    if (window.location.pathname.includes("student-dashboard.html") && currentUser) {
       usernameDisplays.forEach((el) => {
-        if (currentUser) {
-          el.textContent = currentUser.username;
-        }
+        el.textContent = currentUser.name || currentUser.email || "Student";
+      });
+      gradeDisplays.forEach((el) => {
+        el.textContent = currentUser.email ? `Email: ${currentUser.email}` : "";
       });
     }
-    this.renderDashboard();
+
+    await this.renderDashboard();
     this.attachEvents();
   }
 
@@ -39,15 +32,20 @@ export default class StudentController {
     const mainEl = document.querySelector("main");
     if (!mainEl) return;
     mainEl.addEventListener("click", (e) => {
-      if (e.target.classList.contains("btn-start")) {
-        localStorage.setItem("activeExamId", e.target.dataset.id);
-        // student-dashboard.html is in /views, instructions file is named quiz-instructions.html
-        window.location.href = "quiz-instructions.html";
+      const startBtn = e.target.closest(".btn-start");
+      if (startBtn) {
+        const examId = startBtn.dataset.id;
+        localStorage.setItem("activeExamId", examId);
+        window.location.href = `quiz-instructions.html?examId=${examId}`;
       }
-      if (e.target.classList.contains("btn-review")) {
-        localStorage.setItem("activeResultId", e.target.dataset.id);
+
+      const reviewBtn = e.target.closest(".btn-review");
+      if (reviewBtn) {
+        const resultKey = reviewBtn.dataset.id;
+        localStorage.setItem("activeResultId", resultKey);
         window.location.href = "student-result.html";
       }
+
       if (e.target.classList.contains("back")) {
         localStorage.removeItem("activeResultId");
         window.location.href = "student-dashboard.html";
@@ -55,99 +53,97 @@ export default class StudentController {
     });
   }
 
-  renderDashboard() {
-    // 1. Get Assignments for this student
-    const myAssignments = this.storageService
-      .getAssignments()
-      .filter((a) => a.studentId === this.user.id);
-    const myResults = this.storageService
-      .getResults()
-      .filter((r) => r.studentId === this.user.id);
-    const completedExamIds = myResults.map((r) => r.examId);
-
-    // 2. Filter Pending Exams (From assignments that are NOT in results)
-    const pendingAssignments = myAssignments.filter(
-      (a) => !completedExamIds.includes(a.examId)
-    );
-
-    // 3. Resolve Exam Objects
-    const allExams = this.storageService.getExams();
-
-    // Stats
-    const totalScore = myResults.reduce((sum, r) => sum + r.score, 0);
-    const maxScore = myResults.reduce((sum, r) => sum + r.totalScore, 0);
-    const avg = maxScore > 0 ? Math.round((totalScore / maxScore) * 100) : 0;
-
-    const statCompletedEl = document.getElementById("statCompleted");
-    if (statCompletedEl) statCompletedEl.innerText = myResults.length;
-    const statAvgEl = document.getElementById("statAvg");
-    if (statAvgEl) statAvgEl.innerText = avg + "%";
-
-    // Render Pending
+  async renderDashboard() {
     const pendingEl = document.getElementById("pendingList");
-
-    if (pendingEl) {
-      pendingEl.innerHTML = "";
-      if (pendingAssignments.length) {
-        pendingEl.innerHTML = pendingAssignments
-          .map((a) => {
-            const exam = allExams.find((e) => e.id === a.examId);
-            if (!exam) return "";
-            return `
-              <li class="quiz-item card flex flex-col gap-6">
-                <img
-                  src="../assets/img-placeholder.jpg"
-                  alt="Quiz Image"
-                  class="quiz-img"
-                />
-                <span class="quiz-title">${exam.title}</span>
-                <span class="quiz-duration">⏱️ ${exam.durationMinutes} Minutes</span>
-                <span class="quiz-question-count">📖 ${exam.questionsCount} Questions</span>
-                <button class="btn btn-primary btn-sm btn-start" data-id="${exam.id}">
-                  Start Quiz
-                </button>
-              </li>`;
-          })
-          .join("");
-      } else {
-        pendingEl.innerHTML =
-          '<p class="text-muted text-center col-span-2">No pending exams.</p>';
-      }
-    }
-
-    // Render History
     const historyEl = document.getElementById("completedList");
-    if (historyEl) {
-      if (myResults.length) {
-        historyEl.innerHTML = myResults
-          .map((r) => {
-            const exam = allExams.find((e) => e.id === r.examId) || {
-              title: "Unknown",
-            };
-            return `
-              <li class="quiz-item card flex flex-col gap-6">
+    const statCompletedEl = document.getElementById("statCompleted");
+    const statAvgEl = document.getElementById("statAvg");
+
+    try {
+      const allExams = await ApiService.getExams();
+      const completedMap = JSON.parse(localStorage.getItem("completedExams") || "{}");
+      const userCompletedKeys = Object.keys(completedMap).filter((key) => key.startsWith(`${this.user.id}_`));
+
+      const completedResults = userCompletedKeys.map((key) => completedMap[key]);
+      const completedExamIds = completedResults.map((r) => r.examId);
+
+      const pendingExams = allExams.filter((exam) => !completedExamIds.includes(exam.id));
+
+      if (statCompletedEl) statCompletedEl.innerText = completedResults.length;
+      if (statAvgEl) {
+        if (completedResults.length > 0) {
+          const sumPct = completedResults.reduce((acc, r) => acc + (r.percentage || 0), 0);
+          statAvgEl.innerText = `${Math.round(sumPct / completedResults.length)}%`;
+        } else {
+          statAvgEl.innerText = "0%";
+        }
+      }
+
+      if (pendingEl) {
+        if (pendingExams.length) {
+          pendingEl.innerHTML = pendingExams
+            .map((exam) => `
+              <li class="quiz-item card border-0 shadow-sm rounded-4">
                 <img
                   src="../assets/img-placeholder.jpg"
                   alt="Quiz Image"
                   class="quiz-img"
                 />
-                <span class="quiz-title">${exam.title}</span>
-                <span class="quiz-score">${r.score}/${r.totalScore}</span>
-                <span class="quiz-date">Completed ${new Date(
-                  r.date
-                ).toLocaleDateString()}</span>
-                <button class="btn btn-primary btn-sm btn-review" data-id="${
-                  r.id
-                }">
-                  Review Quiz
+                <span class="quiz-title mb-1">${this.escapeHtml(exam.course?.name || "Exam")}</span>
+                <span class="quiz-duration text-muted text-sm"><i class="fa-regular fa-clock me-1"></i>15 Minutes</span>
+                <span class="quiz-question-count text-muted text-sm"><i class="fa-solid fa-list-check me-1"></i>${exam.totalQuestions || 0} Questions</span>
+                <span class="text-sm fw-semibold ${exam.isExactMatch ? 'text-success' : 'text-warning'}">
+                  <i class="fa-solid ${exam.isExactMatch ? 'fa-circle-check' : 'fa-triangle-exclamation'} me-1"></i>
+                  ${exam.isExactMatch ? "Exact Match" : "Closest Match"}
+                </span>
+                <button class="btn btn-primary btn-sm btn-start mt-2" data-id="${exam.id}">
+                  <i class="fa-solid fa-play me-1"></i>Start Quiz
                 </button>
-              </li>`;
-          })
-          .join("");
-      } else {
-        historyEl.innerHTML =
-          '<p class="text-muted text-center">No history yet.</p>';
+              </li>
+            `)
+            .join("");
+        } else {
+          pendingEl.innerHTML = '<p class="text-muted text-center py-4 w-100">No pending exams available.</p>';
+        }
       }
+
+      if (historyEl) {
+        if (completedResults.length) {
+          historyEl.innerHTML = completedResults
+            .map((r) => `
+              <li class="quiz-item card border-0 shadow-sm rounded-4">
+                <img
+                  src="../assets/img-placeholder.jpg"
+                  alt="Quiz Image"
+                  class="quiz-img"
+                />
+                <span class="quiz-title mb-1">${this.escapeHtml(r.examTitle || "Completed Exam")}</span>
+                <span class="quiz-score fs-3 fw-bold text-primary">${r.percentage}%</span>
+                <span class="text-muted text-sm mb-2"><i class="fa-solid fa-check-double me-1 text-success"></i>Score: ${r.score}/${r.totalQuestions}</span>
+                <span class="quiz-date text-muted text-xs mb-2"><i class="fa-regular fa-calendar-check me-1"></i>Completed ${new Date(r.date).toLocaleDateString()}</span>
+                <button class="btn btn-outline-primary btn-sm btn-review mt-2" data-id="${this.user.id}_${r.examId}">
+                  <i class="fa-solid fa-eye me-1"></i>Review Quiz
+                </button>
+              </li>
+            `)
+            .join("");
+        } else {
+          historyEl.innerHTML = '<p class="text-muted text-center py-4 w-100">No completed quiz history yet.</p>';
+        }
+      }
+    } catch (error) {
+      console.error("Failed to render student dashboard:", error);
+      if (pendingEl) pendingEl.innerHTML = `<p class="text-danger text-center py-4">${this.escapeHtml(error.message || "Failed to load dashboard data.")}</p>`;
     }
+  }
+
+  escapeHtml(str) {
+    if (!str) return "";
+    return String(str)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
   }
 }
