@@ -59,6 +59,24 @@ export default class StudentController {
     const statCompletedEl = document.getElementById("statCompleted");
     const statAvgEl = document.getElementById("statAvg");
 
+    if (pendingEl) {
+      pendingEl.innerHTML = `
+        <div class="text-center py-4 w-100 text-muted">
+          <div class="spinner-border text-primary mb-2" role="status"></div>
+          <div>Loading available assignments...</div>
+        </div>
+      `;
+    }
+
+    if (historyEl) {
+      historyEl.innerHTML = `
+        <div class="text-center py-4 w-100 text-muted">
+          <div class="spinner-border text-primary mb-2" role="status"></div>
+          <div>Loading quiz history...</div>
+        </div>
+      `;
+    }
+
     try {
       const allExams = await ApiService.getExams();
       const completedMap = JSON.parse(localStorage.getItem("completedExams") || "{}");

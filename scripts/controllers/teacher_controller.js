@@ -107,14 +107,32 @@ export default class TeacherController {
   }
 
   async loadCourses() {
+    const courseList = document.getElementById('courseList');
+    if (courseList) {
+      courseList.innerHTML = `
+        <div class="text-center py-4 text-muted">
+          <div class="spinner-border text-primary mb-2" role="status"></div>
+          <div>Loading courses...</div>
+        </div>
+      `;
+    }
     this.courses = await ApiService.getCourses();
     this.renderCourseList();
     this.renderCourseSelects();
   }
 
   async loadExams() {
-    const exams = await ApiService.getExams();
     const examsList = document.getElementById('exams-list');
+    if (examsList) {
+      examsList.innerHTML = `
+        <div class="text-center py-4 text-muted">
+          <div class="spinner-border text-primary mb-2" role="status"></div>
+          <div>Loading generated exams...</div>
+        </div>
+      `;
+    }
+
+    const exams = await ApiService.getExams();
 
     if (!exams.length) {
       examsList.innerHTML = '<p class="text-muted py-4 text-center">No generated exams created yet.</p>';
@@ -159,9 +177,13 @@ export default class TeacherController {
     if (!modal || !modalBody) return;
 
     try {
-      modalBody.innerHTML = '<p class="text-muted py-3 text-center"><i class="fa-solid fa-spinner fa-spin me-2"></i>Loading exam details...</p>';
-      
-      // Show Bootstrap modal
+      modalBody.innerHTML = `
+        <div class="text-center py-4 text-muted">
+          <div class="spinner-border text-primary mb-2" role="status"></div>
+          <div>Fetching exam details...</div>
+        </div>
+      `;
+
       const bsModal = new bootstrap.Modal(modal);
       bsModal.show();
 
@@ -333,9 +355,12 @@ export default class TeacherController {
     event.preventDefault();
     const form = event.currentTarget;
     const submitButton = form.querySelector('button[type="submit"]');
+    const originalText = submitButton.innerHTML;
 
     try {
       submitButton.disabled = true;
+      submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Creating course...';
+
       await ApiService.createCourse({
         title: form.title.value.trim(),
         chapterCount: Number(form.chapterCount.value),
@@ -347,6 +372,7 @@ export default class TeacherController {
       this.setStatus('courseStatus', error.message, true);
     } finally {
       submitButton.disabled = false;
+      submitButton.innerHTML = originalText;
     }
   }
 
@@ -373,9 +399,12 @@ export default class TeacherController {
       isCorrect: index === Number(form.correctChoice.value),
     }));
     const submitButton = form.querySelector('button[type="submit"]');
+    const originalText = submitButton.innerHTML;
 
     try {
       submitButton.disabled = true;
+      submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Saving question...';
+
       await ApiService.createQuestion({
         chapterId: form.chapterId.value,
         text: form.text.value.trim(),
@@ -392,6 +421,7 @@ export default class TeacherController {
       this.setStatus('questionStatus', error.message, true);
     } finally {
       submitButton.disabled = false;
+      submitButton.innerHTML = originalText;
     }
   }
 
@@ -446,8 +476,12 @@ export default class TeacherController {
     };
 
     const button = document.getElementById('generateExamBtn');
+    const originalText = button.innerHTML;
+
     try {
       button.disabled = true;
+      button.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Generating optimum recommendation...';
+
       const result = await ApiService.generateOptimumExam(request);
       this.renderGeneratedExam(result, course, request);
       await this.loadExams();
@@ -456,6 +490,7 @@ export default class TeacherController {
       this.setStatus('builderStatus', error.message, true);
     } finally {
       button.disabled = false;
+      button.innerHTML = originalText;
     }
   }
 
